@@ -135,18 +135,6 @@ func NewDatabase(
     }
   }
 
-
-	// someDirectory, err := getUnixfsNode(dbCache)
-	// if err != nil {
-	// 	panic(fmt.Errorf("Could not get File: %s", err))
-	// }
-  // cidDirectory, err := ipfs.Unixfs().Add(ctx, someDirectory)
-	// if err != nil {
-	// 	panic(fmt.Errorf("Could not add Directory: %s", err))
-	// }
-  //
-	// fmt.Printf("Added directory to IPFS with CID %s\n", cidDirectory.String())
-
   err = db.Store.Load(ctx, -1)
   if err != nil {
     // TODO: clean up
