@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/mrusme/superhighway84/models"
 	"github.com/mrusme/superhighway84/tui"
 )
 
@@ -37,9 +38,8 @@ func main() {
   // if err != nil {
   //   log.Panicln(err)
   // }
-
-  TUI := tui.Init(&EMBEDFS)
-
+  //
+  //
   // db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, logger)
   // if err != nil {
   //   log.Panicln(err)
@@ -48,6 +48,24 @@ func main() {
   // db.Connect(func() {
   //   //TUI.App.Stop()
   // })
+  //
+  // articles, _ := db.ListArticles()
+  var articles []models.Article
+
+  go func() {
+    for i := 0; i < 10; i++ {
+      time.Sleep(time.Second * 3)
+      art1 := *models.NewArticle()
+      art1.Subject = "This is a test"
+      art1.Body = "This is just a test article\nWhat's up there?"
+      art1.From = "test@example.com"
+      art1.Newsgroup = "comp.alt.test"
+
+      articles = append(articles, art1)
+    }
+  }()
+
+  TUI := tui.Init(&EMBEDFS, &articles)
 
   go func() {
     time.Sleep(time.Second * 2)

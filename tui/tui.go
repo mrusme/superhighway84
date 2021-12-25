@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
 )
 
@@ -20,7 +21,7 @@ type View interface {
   Refresh()
 }
 
-func Init(embedfs *embed.FS) (*TUI) {
+func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
   t := new(TUI)
 
   tview.Styles = tview.Theme{
@@ -46,7 +47,7 @@ func Init(embedfs *embed.FS) (*TUI) {
 
   t.Views = make(map[string]View)
   t.Views["splashscreen"] = t.NewSplashscreen(&logoBytes)
-  t.Views["mainscreen"] = t.NewMainscreen()
+  t.Views["mainscreen"] = t.NewMainscreen(articlesDatasource)
 
   t.initInput()
   return t
@@ -71,6 +72,7 @@ func (t *TUI) Launch() {
     time.Sleep(time.Millisecond * 200)
     t.SetView("splashscreen")
     t.Refresh()
+    t.App.Draw()
   }()
 
   if err := t.App.Run(); err != nil {
@@ -86,6 +88,5 @@ func(t *TUI) SetView(name string) {
 
 func (t *TUI) Refresh() {
   t.Views[t.ActiveView].Refresh()
-  t.App.Draw()
 }
 
