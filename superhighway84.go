@@ -1,20 +1,20 @@
 package main
 
 import (
-	"context"
-	"fmt"
+	"embed"
+
 	"log"
 	"os"
 
-	"github.com/mrusme/superhighway84/database"
-	"github.com/mrusme/superhighway84/models"
-	"go.uber.org/zap"
+	"github.com/mrusme/superhighway84/tui"
 )
 
+//go:embed superhighway84.png
+var EMBEDFS embed.FS
 
 func main() {
-  ctx, cancel := context.WithCancel(context.Background())
-  defer cancel()
+  // ctx, cancel := context.WithCancel(context.Background())
+  // defer cancel()
 
   dbInit := false
   dbInitValue := os.Getenv("SUPERHIGHWAY84_DB_INIT")
@@ -32,55 +32,62 @@ func main() {
     log.Panicln("SUPERHIGHWAY84_DB_CACHE missing!")
   }
 
-  logger, err := zap.NewDevelopment()
-  if err != nil {
-    log.Panicln(err)
+  TUI := tui.Init(&EMBEDFS)
+
+  TUI.SetView("splashscreen")
+
+  if err := TUI.App.Run(); err != nil {
+    panic(err)
   }
-
-  db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, logger)
-  if err != nil {
-    log.Panicln(err)
-  }
-  defer db.Disconnect()
-  db.Connect()
-
-  var input string
-  for {
-    fmt.Scanln(&input)
-
-    switch input {
-    case "q":
-      return
-    case "g":
-      fmt.Scanln(&input)
-      article, err := db.GetArticleByID(input)
-      if err != nil {
-        log.Println(err)
-      } else {
-        log.Println(article)
-      }
-    case "p":
-      article := models.NewArticle()
-      article.From = "test@example.com"
-      article.Newsgroup = "comp.test"
-      article.Subject = "This is a test!"
-      article.Body = "Hey there, this is a test!"
-
-      err = db.SubmitArticle(article)
-      if err != nil {
-        log.Println(err)
-      } else {
-        log.Println(article)
-      }
-    case "l":
-      articles, err := db.ListArticles()
-      if err != nil {
-        log.Println(err)
-      } else {
-        log.Println(articles)
-      }
-    }
-
-  }
+  // logger, err := zap.NewDevelopment()
+  // if err != nil {
+  //   log.Panicln(err)
+  // }
+  //
+  // db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, logger)
+  // if err != nil {
+  //   log.Panicln(err)
+  // }
+  // defer db.Disconnect()
+  // db.Connect()
+  //
+  // var input string
+  // for {
+  //   fmt.Scanln(&input)
+  //
+  //   switch input {
+  //   case "q":
+  //     return
+  //   case "g":
+  //     fmt.Scanln(&input)
+  //     article, err := db.GetArticleByID(input)
+  //     if err != nil {
+  //       log.Println(err)
+  //     } else {
+  //       log.Println(article)
+  //     }
+  //   case "p":
+  //     article := models.NewArticle()
+  //     article.From = "test@example.com"
+  //     article.Newsgroup = "comp.test"
+  //     article.Subject = "This is a test!"
+  //     article.Body = "Hey there, this is a test!"
+  //
+  //     err = db.SubmitArticle(article)
+  //     if err != nil {
+  //       log.Println(err)
+  //     } else {
+  //       log.Println(article)
+  //     }
+  //   case "l":
+  //     articles, err := db.ListArticles()
+  //     if err != nil {
+  //       log.Println(err)
+  //     } else {
+  //       log.Println(articles)
+  //     }
+  //   }
+  //
+  // }
 }
 
