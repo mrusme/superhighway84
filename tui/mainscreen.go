@@ -43,7 +43,9 @@ func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
     ShowSecondaryText(false).
     SetHighlightFullLine(true).
     SetSelectedBackgroundColor(tcell.ColorTeal).
-    SetSecondaryTextColor(tcell.ColorGrey)
+    SetSecondaryTextColor(tcell.ColorGrey).
+    SetChangedFunc(mainscreen.changeHandler("group")).
+    SetSelectedFunc(mainscreen.selectHandler("group"))
 
   mainscreen.Articles = tview.NewList().
     SetWrapAround(true).
@@ -112,7 +114,16 @@ func(mainscreen *Mainscreen) Refresh() {
 }
 
 func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
-  return nil
+  switch event.Key() {
+  case tcell.KeyCtrlG:
+    mainscreen.T.App.SetFocus(mainscreen.Groups)
+    return nil
+  case tcell.KeyCtrlL:
+    mainscreen.T.App.SetFocus(mainscreen.Articles)
+    return nil
+  }
+
+  return event
 }
 
 func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string, rune)) {
@@ -128,7 +139,12 @@ func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string
 
 func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string, rune)) {
   return func(index int, text string, secondaryText string, shortcut rune) {
-
+    switch(item) {
+    case "group":
+      mainscreen.Refresh()
+    case "article":
+      // TODO: Load article
+    }
   }
 }
 

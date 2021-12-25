@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"math/rand"
 	"time"
 
 	"log"
@@ -51,15 +53,27 @@ func main() {
   //
   // articles, _ := db.ListArticles()
   var articles []models.Article
+  mockGroups := []string{
+    "comp.test",
+    "news.conspiracy",
+    "sci.physics",
+    "talk.lolz",
+    "sci.chemistry",
+    "talk.random",
+    "alt.anarchism",
+    "alt.tv.simpsons",
+  }
 
   go func() {
-    for i := 0; i < 10; i++ {
-      time.Sleep(time.Second * 3)
+    for i := 0; i < 100; i++ {
+      grp := mockGroups[(rand.Intn(len(mockGroups) - 1))]
+
+      time.Sleep(time.Millisecond * 250)
       art1 := *models.NewArticle()
-      art1.Subject = "This is a test"
+      art1.Subject = fmt.Sprintf("A test in %s", grp)
       art1.Body = "This is just a test article\nWhat's up there?"
       art1.From = "test@example.com"
-      art1.Newsgroup = "comp.alt.test"
+      art1.Newsgroup = grp
 
       articles = append(articles, art1)
     }
