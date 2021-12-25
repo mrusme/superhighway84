@@ -12,7 +12,6 @@ import (
 
 type Splashscreen struct {
   Canvas *tview.TextView
-  View
   ImageBytes []byte
 }
 
@@ -36,9 +35,8 @@ func (splashscreen *Splashscreen) GetCanvas() (tview.Primitive) {
   return splashscreen.Canvas
 }
 
-func(splashscreen *Splashscreen) Draw() {
-  canvas := splashscreen.Canvas
-  _, _, w, h := canvas.Box.GetRect()
+func(splashscreen *Splashscreen) Refresh() {
+  _, _, w, h := splashscreen.Canvas.Box.GetRect()
 
   // TODO:
   // (h * 2) is a workaround for what looks like a bug in
@@ -48,7 +46,7 @@ func(splashscreen *Splashscreen) Draw() {
   if err != nil {
     return
   }
-  canvas.Clear()
-	fmt.Fprint(canvas, tview.TranslateANSI(logoImage.RenderExt(false, false)))
+  // splashscreen.Canvas.Clear()
+	fmt.Fprint(splashscreen.Canvas, tview.TranslateANSI(logoImage.RenderExt(false, false)))
 }
 

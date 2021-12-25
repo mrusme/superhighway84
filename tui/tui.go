@@ -17,7 +17,7 @@ type TUI struct {
 
 type View interface {
   GetCanvas() (tview.Primitive)
-  Draw()
+  Refresh()
 }
 
 func Init(embedfs *embed.FS) (*TUI) {
@@ -46,6 +46,7 @@ func Init(embedfs *embed.FS) (*TUI) {
 
   t.Views = make(map[string]View)
   t.Views["splashscreen"] = t.NewSplashscreen(&logoBytes)
+  t.Views["mainscreen"] = t.NewMainscreen()
 
   t.initInput()
   return t
@@ -55,7 +56,7 @@ func (t *TUI) initInput() {
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlR:
-      t.Draw()
+      t.Refresh()
 			return nil
 		case tcell.KeyCtrlQ:
 			t.App.Stop()
@@ -66,11 +67,10 @@ func (t *TUI) initInput() {
 }
 
 func (t *TUI) Launch() {
-  t.SetView("splashscreen")
-
   go func() {
-    time.Sleep(200 * time.Millisecond)
-    t.Draw()
+    time.Sleep(time.Millisecond * 200)
+    t.SetView("splashscreen")
+    t.Refresh()
   }()
 
   if err := t.App.Run(); err != nil {
@@ -79,12 +79,13 @@ func (t *TUI) Launch() {
 }
 
 func(t *TUI) SetView(name string) {
-  t.App.SetRoot(t.Views[name].GetCanvas(), true)
   t.ActiveView = name
+  t.App.SetRoot(t.Views[t.ActiveView].GetCanvas(), true)
+  t.App.Draw()
 }
 
-func (t *TUI) Draw() {
-  t.Views[t.ActiveView].Draw()
+func (t *TUI) Refresh() {
+  t.Views[t.ActiveView].Refresh()
   t.App.Draw()
 }
 

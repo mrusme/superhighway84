@@ -1,23 +1,21 @@
 package main
 
 import (
-	"context"
 	"embed"
+	"time"
 
 	"log"
 	"os"
 
-	"github.com/mrusme/superhighway84/database"
 	"github.com/mrusme/superhighway84/tui"
-	"go.uber.org/zap"
 )
 
 //go:embed superhighway84.jpeg
 var EMBEDFS embed.FS
 
 func main() {
-  ctx, cancel := context.WithCancel(context.Background())
-  defer cancel()
+  // ctx, cancel := context.WithCancel(context.Background())
+  // defer cancel()
 
   dbInit := false
   dbInitValue := os.Getenv("SUPERHIGHWAY84_DB_INIT")
@@ -35,28 +33,29 @@ func main() {
     log.Panicln("SUPERHIGHWAY84_DB_CACHE missing!")
   }
 
-  logger, err := zap.NewDevelopment()
-  if err != nil {
-    log.Panicln(err)
-  }
+  // logger, err := zap.NewDevelopment()
+  // if err != nil {
+  //   log.Panicln(err)
+  // }
 
   TUI := tui.Init(&EMBEDFS)
 
-  db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, logger)
-  if err != nil {
-    log.Panicln(err)
-  }
-  defer db.Disconnect()
-  db.Connect(func() {
-    //TUI.App.Stop()
-  })
+  // db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, logger)
+  // if err != nil {
+  //   log.Panicln(err)
+  // }
+  // defer db.Disconnect()
+  // db.Connect(func() {
+  //   //TUI.App.Stop()
+  // })
 
-
-
+  go func() {
+    time.Sleep(time.Second * 2)
+    TUI.SetView("mainscreen")
+    TUI.Refresh()
+  }()
   TUI.Launch()
 
-  // db.Connect()
-  //
   // var input string
   // for {
   //   fmt.Scanln(&input)
