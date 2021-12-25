@@ -2,13 +2,18 @@ package database
 
 import (
 	"context"
+	"log"
+	"sync"
 
 	orbitdb "berty.tech/go-orbit-db"
 	"berty.tech/go-orbit-db/accesscontroller"
+	"berty.tech/go-orbit-db/events"
 	"berty.tech/go-orbit-db/iface"
+	"berty.tech/go-orbit-db/stores"
 	"berty.tech/go-orbit-db/stores/documentstore"
 	config "github.com/ipfs/go-ipfs-config"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 
@@ -17,6 +22,8 @@ import (
 
 type Database struct {
   ctx                 context.Context
+  Name                string
+  Init                bool
   URI                 string
   Cache               string
 
@@ -24,6 +31,7 @@ type Database struct {
   IPFSNode            icore.CoreAPI
   OrbitDB             orbitdb.OrbitDB
   Store               orbitdb.DocumentStore
+  StoreEventChan      <-chan events.Event
 }
 
 func (db *Database)init() (error) {
@@ -49,13 +57,13 @@ func (db *Database)init() (error) {
     return err
   }
 
-  addr, err := db.OrbitDB.DetermineAddress(db.ctx, "sync-test", "docstore", &orbitdb.DetermineAddressOptions{})
+  addr, err := db.OrbitDB.DetermineAddress(db.ctx, db.Name, "docstore", &orbitdb.DetermineAddressOptions{})
   if err != nil {
     return err
   }
   db.URI = addr.String()
 
-  db.Store, err = db.OrbitDB.Docs(db.ctx, "sync-test", &orbitdb.CreateDBOptions{
+  db.Store, err = db.OrbitDB.Docs(db.ctx, db.Name, &orbitdb.CreateDBOptions{
     AccessController: ac,
     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
   })
@@ -63,6 +71,7 @@ func (db *Database)init() (error) {
     return err
   }
 
+  db.StoreEventChan = db.Store.Subscribe(db.ctx)
   return nil
 }
 
@@ -89,7 +98,32 @@ func (db *Database)open() (error) {
 
   db.Store = dbstore.(orbitdb.DocumentStore)
 
+  db.StoreEventChan = db.Store.Subscribe(db.ctx)
   return nil
+}
+
+func(db *Database) connectToPeers() error {
+	var wg sync.WaitGroup
+
+  peerInfos, err := config.DefaultBootstrapPeers()
+  if err != nil {
+    return err
+  }
+
+	wg.Add(len(peerInfos))
+	for _, peerInfo := range peerInfos {
+		go func(peerInfo *peer.AddrInfo) {
+			defer wg.Done()
+			err := db.IPFSNode.Swarm().Connect(db.ctx, *peerInfo)
+			if err != nil {
+        db.Logger.Debug("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
+			} else {
+        db.Logger.Debug("connected!", zap.String("peerID", peerInfo.ID.String()))
+      }
+		}(&peerInfo)
+	}
+	wg.Wait()
+	return nil
 }
 
 func NewDatabase(
@@ -103,10 +137,11 @@ func NewDatabase(
 
   db := new(Database)
   db.ctx = ctx
+  db.Name = "sync-test"
+  db.Init = dbInit
   db.URI = dbURI
   db.Cache = dbCache
   db.Logger = logger
-
 
   defaultPath, err := config.PathRoot()
   if err != nil {
@@ -122,23 +157,22 @@ func NewDatabase(
     return nil, err
   }
 
+  return db, nil
+}
 
-  if dbInit {
+func (db *Database) Connect(onReady func()) (error) {
+  var err error
+
+  if db.Init {
     err = db.init()
     if err != nil {
-      return nil, err
+      return err
     }
   } else {
     err = db.open()
     if err != nil {
-      return nil, err
+      return err
     }
-  }
-
-  err = db.Store.Load(ctx, -1)
-  if err != nil {
-    // TODO: clean up
-    return nil, err
   }
 
   // log.Println(db.Store.ReplicationStatus().GetBuffered())
@@ -147,18 +181,34 @@ func NewDatabase(
 
   db.Logger.Info("running ...")
 
-  return db, nil
-}
-
-func (db *Database) Connect() {
-	go func() {
-		err := connectToPeers(db.ctx, db.IPFSNode)
+	// go func() {
+		err = db.connectToPeers()
 		if err != nil {
       db.Logger.Debug("failed to connect: %s", zap.Error(err))
     } else {
       db.Logger.Debug("connected to peer!")
     }
-	}()
+	// }()
+
+  go func() {
+    for {
+      for ev := range db.StoreEventChan {
+        log.Printf("GOT EVENT %+v\n", ev)
+        switch ev.(type) {
+        case *stores.EventReady:
+          onReady()
+        }
+      }
+    }
+  }()
+
+  err = db.Store.Load(db.ctx, -1)
+  if err != nil {
+    // TODO: clean up
+    return err
+  }
+
+  return nil
 }
 
 func (db *Database) Disconnect() {

@@ -3,6 +3,7 @@ package tui
 import (
 	"embed"
 	"log"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -38,7 +39,7 @@ func Init(embedfs *embed.FS) (*TUI) {
 
   t.App = tview.NewApplication()
 
-  logoBytes, err := embedfs.ReadFile("superhighway84.png")
+  logoBytes, err := embedfs.ReadFile("superhighway84.jpeg")
   if err != nil {
     log.Panicln(err)
   }
@@ -64,6 +65,19 @@ func (t *TUI) initInput() {
 	})
 }
 
+func (t *TUI) Launch() {
+  t.SetView("splashscreen")
+
+  go func() {
+    time.Sleep(200 * time.Millisecond)
+    t.Draw()
+  }()
+
+  if err := t.App.Run(); err != nil {
+    panic(err)
+  }
+}
+
 func(t *TUI) SetView(name string) {
   t.App.SetRoot(t.Views[name].GetCanvas(), true)
   t.ActiveView = name
@@ -71,5 +85,6 @@ func(t *TUI) SetView(name string) {
 
 func (t *TUI) Draw() {
   t.Views[t.ActiveView].Draw()
+  t.App.Draw()
 }
 
