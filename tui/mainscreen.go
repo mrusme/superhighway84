@@ -6,18 +6,29 @@ import (
 	"github.com/rivo/tview"
 )
 
+type GroupMapEntry struct {
+  Index   int
+}
 
 type Mainscreen struct {
+  T      *TUI
   Canvas *tview.Grid
 
   Groups *tview.List
   Articles *tview.List
 
+  CurrentGroupSelected int
+  CurrentArticleSelected int
+
+  GroupsMap map[string]GroupMapEntry
+  GroupsList []string
   ArticlesDatasource   *[]models.Article
+
 }
 
 func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
   mainscreen := new(Mainscreen)
+  mainscreen.T = t
 
   mainscreen.ArticlesDatasource = articlesDatasource
 
@@ -30,23 +41,18 @@ func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
   mainscreen.Groups = tview.NewList().
     SetWrapAround(false).
     ShowSecondaryText(false).
-    AddItem("List item 1", "Some explanatory text", 0, nil).
-    AddItem("List item 2", "Some explanatory text", 0, nil).
-    AddItem("List item 3", "Some explanatory text", 0, nil).
-    AddItem("List item 4", "Some explanatory text", 0, nil).
-    AddItem("Quit", "Press to exit", 'q', func() {
-    })
+    SetHighlightFullLine(true).
+    SetSelectedBackgroundColor(tcell.ColorTeal).
+    SetSecondaryTextColor(tcell.ColorGrey)
 
   mainscreen.Articles = tview.NewList().
     SetWrapAround(true).
+    ShowSecondaryText(true).
     SetHighlightFullLine(true).
     SetSelectedBackgroundColor(tcell.ColorTeal).
     SetSecondaryTextColor(tcell.ColorGrey).
-
-    AddItem("List item 1", "Some explanatory text", 0, nil).
-    AddItem("List item 2", "Some explanatory text", 0, nil).
-    AddItem("List item 3", "Some explanatory text", 0, nil).
-    AddItem("List item 4", "Some explanatory text", 0, nil)
+    SetChangedFunc(mainscreen.changeHandler("article")).
+    SetSelectedFunc(mainscreen.selectHandler("article"))
 
 	mainscreen.Canvas = tview.NewGrid().
 		SetRows(3, 0, 3).
@@ -66,20 +72,63 @@ func (mainscreen *Mainscreen) GetCanvas() (tview.Primitive) {
 }
 
 func(mainscreen *Mainscreen) Refresh() {
-  addedGroups := make(map[string]bool)
+  selectedGroup := mainscreen.CurrentGroupSelected
+  selectedArticle := mainscreen.CurrentArticleSelected
+
+  previousGroupsList := mainscreen.GroupsList
+  mainscreen.GroupsList = []string{}
+
+  // previousGroupsMap := mainscreen.GroupsMap
+  mainscreen.GroupsMap = make(map[string]GroupMapEntry)
+
   mainscreen.Groups.Clear()
   mainscreen.Articles.Clear()
 
   mainscreen.Groups.AddItem("*", "", 0, nil)
+  mainscreen.GroupsList = append(mainscreen.GroupsList, "*")
+  mainscreen.GroupsMap["*"] = GroupMapEntry{
+    Index: 0,
+  }
 
   for _, article := range *mainscreen.ArticlesDatasource {
-    mainscreen.Articles.AddItem(article.Subject, article.From, 0, nil)
+    if selectedGroup == 0 ||
+      (selectedGroup != 0 &&
+        article.Newsgroup == previousGroupsList[selectedGroup]) {
+      mainscreen.Articles.AddItem(article.Subject, article.From, 0, nil)
+    }
 
-    if addedGroups[article.Newsgroup] != true {
+    if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
       mainscreen.Groups.AddItem(article.Newsgroup, "", 0, nil)
-      addedGroups[article.Newsgroup] = true
+      mainscreen.GroupsList = append(mainscreen.GroupsList, article.Newsgroup)
+      mainscreen.GroupsMap[article.Newsgroup] = GroupMapEntry{
+        Index: (mainscreen.Groups.GetItemCount() - 1),
+      }
     }
   }
 
+  mainscreen.Groups.SetCurrentItem(selectedGroup)
+  mainscreen.Articles.SetCurrentItem(selectedArticle)
+  mainscreen.T.App.SetFocus(mainscreen.Articles)
+}
+
+func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
+  return nil
+}
+
+func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string, rune)) {
+  return func(index int, text string, secondaryText string, shortcut rune) {
+    switch(item) {
+    case "group":
+      mainscreen.CurrentGroupSelected = index
+    case "article":
+      mainscreen.CurrentArticleSelected = index
+    }
+  }
+}
+
+func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string, rune)) {
+  return func(index int, text string, secondaryText string, shortcut rune) {
+
+  }
 }
 

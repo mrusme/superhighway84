@@ -6,17 +6,20 @@ import (
 	"image/color"
 
 	"github.com/eliukblau/pixterm/pkg/ansimage"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 
 type Splashscreen struct {
+  T *TUI
   Canvas *tview.TextView
   ImageBytes []byte
 }
 
 func(t *TUI) NewSplashscreen(logo *[]byte) (*Splashscreen) {
   splashscreen := new(Splashscreen)
+  splashscreen.T = t
 
   canvas := tview.NewTextView().
 		SetDynamicColors(true).
@@ -48,5 +51,9 @@ func(splashscreen *Splashscreen) Refresh() {
   }
   // splashscreen.Canvas.Clear()
 	fmt.Fprint(splashscreen.Canvas, tview.TranslateANSI(logoImage.RenderExt(false, false)))
+}
+
+func (splashscreen *Splashscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
+  return nil
 }
 

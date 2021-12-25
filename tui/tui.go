@@ -19,6 +19,8 @@ type TUI struct {
 type View interface {
   GetCanvas() (tview.Primitive)
   Refresh()
+
+  HandleInput(event *tcell.EventKey) (*tcell.EventKey)
 }
 
 func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
@@ -61,6 +63,9 @@ func (t *TUI) initInput() {
 			return nil
 		case tcell.KeyCtrlQ:
 			t.App.Stop()
+      return nil
+    default:
+      return t.Views[t.ActiveView].HandleInput(event)
 		}
 
 		return event
