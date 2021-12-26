@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"sort"
 	"sync"
 
 	orbitdb "berty.tech/go-orbit-db"
@@ -212,10 +213,15 @@ func (db *Database) GetArticleByID(id string) (models.Article, error) {
 func (db *Database) ListArticles() ([]models.Article, error) {
   var articles []models.Article
 
-  entities, err := db.Store.Query(db.ctx, func(e interface{})(bool, error) {
+  _, err := db.Store.Query(db.ctx, func(e interface{})(bool, error) {
     entity := e.(map[string]interface{})
     if entity["type"] == "article" {
-      return true, nil
+      var article models.Article
+      err := mapstructure.Decode(entity, &article)
+      if err == nil {
+        articles = append(articles, article)
+      }
+      return true, err
     }
     return false, nil
   })
@@ -223,14 +229,9 @@ func (db *Database) ListArticles() ([]models.Article, error) {
     return articles, err
   }
 
-  for _, entity := range entities {
-    var article models.Article
-    err = mapstructure.Decode(entity, &article)
-    if err != nil {
-      return articles, err
-    }
-    articles = append(articles, article)
-  }
+  sort.SliceStable(articles, func(i, j int) bool {
+    return articles[i].Date > articles[j].Date
+  })
 
   return articles, nil
 }
