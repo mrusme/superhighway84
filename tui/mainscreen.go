@@ -4,13 +4,20 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
 )
+
+var HEADER_LOGO =
+`    _  _ _ __ ____                  __   _      __                   ___  ____
+   /  / / // / __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /
+  _\ _\_\_\\_\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/
+ /  / / // /___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/
+                   /_/                  /___/                /___/
+`
 
 type GroupMapEntry struct {
   Index   int
@@ -19,6 +26,9 @@ type GroupMapEntry struct {
 type Mainscreen struct {
   T      *TUI
   Canvas *tview.Grid
+
+  Header *tview.TextView
+  Footer *tview.TextView
 
   Groups *tview.List
   Articles *tview.List
@@ -39,41 +49,61 @@ func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
 
   mainscreen.ArticlesDatasource = articlesDatasource
 
-	newPrimitive := func(text string) tview.Primitive {
-		return tview.NewTextView().
-			SetTextAlign(tview.AlignCenter).
-			SetText(text)
-	}
-
   mainscreen.Groups = tview.NewList().
     SetWrapAround(false).
     ShowSecondaryText(false).
     SetHighlightFullLine(true).
-    SetSelectedBackgroundColor(tcell.ColorTeal).
+    SetSelectedBackgroundColor(tcell.ColorHotPink).
+    SetSelectedTextColor(tcell.ColorWhite).
     SetSecondaryTextColor(tcell.ColorGrey).
     SetChangedFunc(mainscreen.changeHandler("group")).
     SetSelectedFunc(mainscreen.selectHandler("group"))
+  mainscreen.Groups.
+    SetBorder(true).
+    SetBorderAttributes(tcell.AttrNone).
+    SetBorderColor(tcell.ColorTeal)
 
   mainscreen.Articles = tview.NewList().
     SetWrapAround(true).
     ShowSecondaryText(true).
     SetHighlightFullLine(true).
-    SetSelectedBackgroundColor(tcell.ColorTeal).
+    SetSelectedBackgroundColor(tcell.ColorHotPink).
+    SetSelectedTextColor(tcell.ColorWhite).
     SetSecondaryTextColor(tcell.ColorGrey).
     SetChangedFunc(mainscreen.changeHandler("article")).
     SetSelectedFunc(mainscreen.selectHandler("article"))
+  mainscreen.Articles.
+    SetBorder(true).
+    SetBorderAttributes(tcell.AttrNone).
+    SetBorderColor(tcell.ColorTeal)
+
+  mainscreen.Header = tview.NewTextView().
+    SetText(HEADER_LOGO).
+    SetTextColor(tcell.ColorHotPink)
+  mainscreen.Header.SetBorder(false)
+
+  mainscreen.Footer = tview.NewTextView().
+    SetText("It really whips the llama's ass").
+    SetTextColor(tcell.ColorHotPink).
+    SetTextAlign(tview.AlignRight)
+  mainscreen.Footer.SetBorder(false).
+    SetBorderPadding(0, 0, 1, 1)
 
 	mainscreen.Canvas = tview.NewGrid().
-		SetRows(3, 0, 3).
+		SetRows(5, 0, 1).
 		SetColumns(30, 0).
-		SetBorders(true).
-		AddItem(newPrimitive("Header"), 0, 0, 1, 2, 0, 0, false).
-		AddItem(newPrimitive("Footer"), 2, 0, 1, 2, 0, 0, false)
+		SetBorders(false).
+		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
+		AddItem(mainscreen.Footer, 2, 0, 1, 2, 0, 0, false)
 
 	mainscreen.Canvas.AddItem(mainscreen.Groups, 1, 0, 1, 1, 0, 0, false).
 		AddItem(mainscreen.Articles, 1, 1, 1, 1, 0, 0, false)
 
   return mainscreen
+}
+
+func (mainscreen *Mainscreen) SetFooter(text string) {
+  mainscreen.Footer.SetText(text)
 }
 
 func (mainscreen *Mainscreen) GetCanvas() (tview.Primitive) {
@@ -106,7 +136,7 @@ func(mainscreen *Mainscreen) Refresh() {
     if selectedGroup == 0 ||
       (selectedGroup != 0 &&
         article.Newsgroup == previousGroupsList[selectedGroup]) {
-      mainscreen.Articles.AddItem(article.Subject, article.From, 0, nil)
+      mainscreen.Articles.AddItem(fmt.Sprintf("[teal]%s[-]", article.Subject), fmt.Sprintf("On [lightgray]%s[-] by %s", MillisecondsToDate(article.Date), article.From), 0, nil)
       mainscreen.ArticlesList = append(mainscreen.ArticlesList, &article)
     }
 
@@ -219,7 +249,7 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   newArticle.Newsgroup = article.Newsgroup
   // TODO: newArticle.From =
   // TODO: newArticle.Organisation =
-  newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", time.Unix(0, article.Date * int64(time.Millisecond)).Format("Mon Jan _2 15:04:05 2006"), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
+  newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", MillisecondsToDate(article.Date), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
 
   updatedNewArticle, err := OpenArticle(mainscreen.T.App, newArticle)
   if err != nil {

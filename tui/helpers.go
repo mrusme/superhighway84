@@ -8,10 +8,15 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
 )
+
+func MillisecondsToDate(ms int64) (string) {
+  return time.Unix(0, ms * int64(time.Millisecond)).Format("Mon Jan _2 15:04:05 2006")
+}
 
 func OpenArticle(app *tview.Application, article *models.Article) (models.Article, error) {
   tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
@@ -57,6 +62,7 @@ func OpenArticle(app *tview.Application, article *models.Article) (models.Articl
 
   headerPart := strings.TrimSpace(content[0])
   subject := strings.TrimPrefix(headerPart, "Subject: ")
+  // TODO: Perform more validations
   if len(subject) <= 1 {
     return *article, errors.New("Invalid subject")
   }
