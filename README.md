@@ -73,9 +73,16 @@ KNOWN LIMITATIONS
 
 - Probably plenty more that have yet to been found...
 
-```
 
-**Credits**
-- Superhighway84 code & graphics by [@mrusme](https://github.com/mrusme)
-- Logo backdrop by [Swift](https://twitter.com/Swift_1_2/status/1114865117533888512)
+
+CREDITS
+-------
+
+- Superhighway84 name, code and graphics by mrusme
+  https://github.com/mrusme
+
+- Logo backdrop by Swift
+  https://twitter.com/Swift_1_2/status/1114865117533888512
+
+```
 
