@@ -1,11 +1,10 @@
 package tui
 
 import (
-	"io/ioutil"
-	"log"
-	"os"
-	"os/exec"
+	"fmt"
 	"sort"
+	"strings"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
@@ -135,6 +134,12 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
   case tcell.KeyCtrlL:
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
+  case tcell.KeyRune:
+    switch event.Rune() {
+    case 'r':
+      mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
+    }
+    return nil
   }
 
   return event
@@ -157,38 +162,43 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
     case "group":
       mainscreen.Refresh()
     case "article":
-      article := *mainscreen.ArticlesList[index]
-
-      tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
-      if err != nil {
-        // TODO: Show modal with error
-        return
-      }
-
-      defer os.Remove(tmpFile.Name())
-
-      tmpContent := []byte(article.Body)
-      if _, err = tmpFile.Write(tmpContent); err != nil {
-        // TODO: Show modal with error
-        return
-      }
-
-      if err := tmpFile.Close(); err != nil {
-        // TODO: Show modal with error
-        return
-      }
-
-      mainscreen.T.App.Suspend(func() {
-        cmd := exec.Command(os.Getenv("EDITOR"), tmpFile.Name())
-        cmd.Stdin = os.Stdin
-        cmd.Stdout = os.Stdout
-        err := cmd.Run()
-        if err != nil {
-          log.Println(err)
-        }
-        return
-      })
+      OpenArticle(mainscreen.T.App, mainscreen.ArticlesList[index])
     }
   }
+}
+
+func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
+  newArticle := models.NewArticle()
+
+  newArticle.Subject = fmt.Sprintf("Re: %s", article.Subject)
+  newArticle.InReplyToID = article.ID
+  newArticle.Newsgroup = article.Newsgroup
+  // TODO: newArticle.From =
+  // TODO: newArticle.Organisation =
+  newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", time.Unix(0, article.Date * int64(time.Millisecond)).Format("Mon Jan _2 15:04:05 2006"), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
+
+  _, err := OpenArticle(mainscreen.T.App, newArticle)
+  if err != nil {
+    // TODO: Show modal
+    return
+  }
+
+  // TODO: Write reply
+  mainscreen.T.ShowModal(
+    "Do you want to post this article?",
+    map[string]ModalButton{
+      "[Y]es": {
+        Rune: 'y',
+        Callback: func() {
+          return
+        },
+      },
+      "[N]o": {
+        Rune: 'n',
+        Callback: func() {
+          return
+        },
+      },
+    })
 }
 

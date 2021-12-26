@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"time"
+	"unicode"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
@@ -14,6 +15,10 @@ type TUI struct {
   App                        *tview.Application
   Views                      map[string]View
   ActiveView                 string
+
+  Modal                      *tview.Modal
+  ModalVisible               bool
+  ModalButtons               map[string]ModalButton
 }
 
 type View interface {
@@ -21,6 +26,11 @@ type View interface {
   Refresh()
 
   HandleInput(event *tcell.EventKey) (*tcell.EventKey)
+}
+
+type ModalButton struct {
+  Rune      rune
+  Callback  func()
 }
 
 func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
@@ -51,6 +61,8 @@ func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
   t.Views["splashscreen"] = t.NewSplashscreen(&logoBytes)
   t.Views["mainscreen"] = t.NewMainscreen(articlesDatasource)
 
+  t.ModalVisible = false
+
   t.initInput()
   return t
 }
@@ -65,7 +77,18 @@ func (t *TUI) initInput() {
 			t.App.Stop()
       return nil
     default:
-      return t.Views[t.ActiveView].HandleInput(event)
+      if t.ModalVisible == true && event.Key() == tcell.KeyRune {
+        for _, modalButton := range t.ModalButtons {
+          if unicode.ToLower(modalButton.Rune) == unicode.ToLower(event.Rune()) {
+            modalButton.Callback()
+            t.HideModal()
+            return nil
+          }
+        }
+        return nil
+      } else {
+        return t.Views[t.ActiveView].HandleInput(event)
+      }
 		}
 	})
 }
@@ -73,7 +96,7 @@ func (t *TUI) initInput() {
 func (t *TUI) Launch() {
   go func() {
     time.Sleep(time.Millisecond * 200)
-    t.SetView("splashscreen")
+    t.SetView("splashscreen", true)
     t.Refresh()
     t.App.Draw()
   }()
@@ -83,13 +106,39 @@ func (t *TUI) Launch() {
   }
 }
 
-func(t *TUI) SetView(name string) {
+func(t *TUI) SetView(name string, redraw bool) {
   t.ActiveView = name
   t.App.SetRoot(t.Views[t.ActiveView].GetCanvas(), true)
-  t.App.Draw()
+  if redraw {
+    t.App.Draw()
+  }
 }
 
 func (t *TUI) Refresh() {
   t.Views[t.ActiveView].Refresh()
+}
+
+func(t *TUI) ShowModal(text string, buttons map[string]ModalButton) {
+  t.Modal = tview.NewModal().
+    SetText(text)
+    // SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+    //   modalButton := buttons[buttonLabel]
+    //   modalButton.Callback()
+    //   t.HideModal()
+    // })
+  var buttonLabels []string
+  for buttonLabel := range buttons {
+    buttonLabels = append(buttonLabels, buttonLabel)
+  }
+  t.Modal.AddButtons(buttonLabels)
+
+  t.ModalVisible = true
+  t.ModalButtons = buttons
+  t.App.SetRoot(t.Modal, false).SetFocus(t.Modal)
+}
+
+func(t *TUI) HideModal() {
+  t.ModalVisible = false
+  t.SetView(t.ActiveView, false)
 }
 

@@ -85,7 +85,7 @@ func main() {
 
   go func() {
     time.Sleep(time.Second * 2)
-    TUI.SetView("mainscreen")
+    TUI.SetView("mainscreen", true)
     TUI.Refresh()
   }()
   TUI.Launch()
