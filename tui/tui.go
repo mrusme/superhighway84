@@ -19,6 +19,9 @@ type TUI struct {
   Modal                      *tview.Modal
   ModalVisible               bool
   ModalButtons               map[string]ModalButton
+
+  CallbackRefreshArticles    func() (error)
+  CallbackSubmitArticle      func(article *models.Article) (error)
 }
 
 type View interface {
@@ -40,7 +43,7 @@ func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
 
   tview.Styles = tview.Theme{
     PrimitiveBackgroundColor:    tcell.ColorDefault,
-    ContrastBackgroundColor:     tcell.ColorTeal,
+    ContrastBackgroundColor:     tcell.ColorPink,
     MoreContrastBackgroundColor: tcell.ColorTeal,
     BorderColor:                 tcell.ColorWhite,
     TitleColor:                  tcell.ColorWhite,
@@ -73,15 +76,24 @@ func (t *TUI) initInput() {
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlR:
+      if t.CallbackRefreshArticles != nil {
+        err := t.CallbackRefreshArticles()
+        if err != nil {
+          t.ShowErrorModal(err.Error())
+          return nil
+        }
+      }
       t.Refresh()
 			return nil
 		case tcell.KeyCtrlQ:
 			t.App.Stop()
       return nil
     default:
-      if t.ModalVisible == true && event.Key() == tcell.KeyRune {
+      if t.ModalVisible == true {
         for _, modalButton := range t.ModalButtons {
-          if unicode.ToLower(modalButton.Rune) == unicode.ToLower(event.Rune()) {
+          if modalButton.Rune == '*' ||
+            (event.Key() == tcell.KeyRune &&
+              unicode.ToLower(modalButton.Rune) == unicode.ToLower(event.Rune())) {
             modalButton.Callback()
             t.HideModal()
             return nil
@@ -147,3 +159,15 @@ func(t *TUI) HideModal() {
   t.SetView(t.ActiveView, false)
 }
 
+func(t *TUI) ShowErrorModal(text string) {
+  t.ShowModal(
+    text,
+    map[string]ModalButton{
+      "(F)uck": {
+        Rune: '*',
+        Callback: func() {
+          return
+        },
+      },
+    })
+}

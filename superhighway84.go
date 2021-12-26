@@ -82,6 +82,14 @@ func main() {
   // ======================== /TESTING ==============================
 
   TUI := tui.Init(&EMBEDFS, &articles)
+  // TUI.CallbackRefreshArticles = func() (error) {
+  //   articles, err := db.ListArticles()
+  //   return err
+  // }
+  TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
+    // return db.SubmitArticle(article)
+    return nil
+  }
 
   go func() {
     time.Sleep(time.Second * 2)

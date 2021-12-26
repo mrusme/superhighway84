@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
@@ -139,7 +140,9 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
   case tcell.KeyRune:
-    switch event.Rune() {
+    switch unicode.ToLower(event.Rune()) {
+    case 'n':
+      mainscreen.submitNewArticle(mainscreen.GroupsList[mainscreen.CurrentGroupSelected])
     case 'r':
       mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
     }
@@ -171,6 +174,43 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
   }
 }
 
+func(mainscreen *Mainscreen) submitNewArticle(group string) {
+  newArticle := models.NewArticle()
+
+  newArticle.Subject = ""
+  newArticle.Newsgroup = group
+  // TODO: newArticle.From =
+  // TODO: newArticle.Organisation =
+  newArticle.Body = ""
+
+  updatedNewArticle, err := OpenArticle(mainscreen.T.App, newArticle)
+  if err != nil {
+    mainscreen.T.ShowErrorModal(err.Error())
+    return
+  }
+
+  mainscreen.T.ShowModal(
+    "Do you want to submit this new article?",
+    map[string]ModalButton{
+      "(Y)es": {
+        Rune: 'y',
+        Callback: func() {
+          if mainscreen.T.CallbackSubmitArticle != nil {
+            mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
+          }
+          return
+        },
+      },
+      "(N)ope": {
+        Rune: 'n',
+        Callback: func() {
+          return
+        },
+      },
+    })
+
+}
+
 func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   newArticle := models.NewArticle()
 
@@ -181,23 +221,25 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   // TODO: newArticle.Organisation =
   newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", time.Unix(0, article.Date * int64(time.Millisecond)).Format("Mon Jan _2 15:04:05 2006"), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
 
-  _, err := OpenArticle(mainscreen.T.App, newArticle)
+  updatedNewArticle, err := OpenArticle(mainscreen.T.App, newArticle)
   if err != nil {
-    // TODO: Show modal
+    mainscreen.T.ShowErrorModal(err.Error())
     return
   }
 
-  // TODO: Write reply
   mainscreen.T.ShowModal(
-    "Do you want to post this article?",
+    "Do you want to submit this reply?",
     map[string]ModalButton{
-      "[Y]es": {
+      "(Y)es": {
         Rune: 'y',
         Callback: func() {
+          if mainscreen.T.CallbackSubmitArticle != nil {
+            mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
+          }
           return
         },
       },
-      "[N]o": {
+      "(N)ope": {
         Rune: 'n',
         Callback: func() {
           return
