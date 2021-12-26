@@ -20,6 +20,8 @@ type TUI struct {
   ModalVisible               bool
   ModalButtons               map[string]ModalButton
 
+  ArticlesDatasource         *[]models.Article
+
   CallbackRefreshArticles    func() (error)
   CallbackSubmitArticle      func(article *models.Article) (error)
 }
@@ -38,7 +40,7 @@ type ModalButton struct {
   Callback  func()
 }
 
-func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
+func Init(embedfs *embed.FS) (*TUI) {
   t := new(TUI)
 
   tview.Styles = tview.Theme{
@@ -64,7 +66,7 @@ func Init(embedfs *embed.FS, articlesDatasource *[]models.Article) (*TUI) {
 
   t.Views = make(map[string]View)
   t.Views["splashscreen"] = t.NewSplashscreen(&logoBytes)
-  t.Views["mainscreen"] = t.NewMainscreen(articlesDatasource)
+  t.Views["mainscreen"] = t.NewMainscreen()
 
   t.ModalVisible = false
 

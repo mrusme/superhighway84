@@ -39,15 +39,12 @@ type Mainscreen struct {
   GroupsMap map[string]GroupMapEntry
   GroupsList []string
 
-  ArticlesDatasource   *[]models.Article
   ArticlesList []*models.Article
 }
 
-func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
+func(t *TUI) NewMainscreen() (*Mainscreen) {
   mainscreen := new(Mainscreen)
   mainscreen.T = t
-
-  mainscreen.ArticlesDatasource = articlesDatasource
 
   mainscreen.Groups = tview.NewList().
     SetWrapAround(false).
@@ -132,7 +129,7 @@ func(mainscreen *Mainscreen) Refresh() {
     Index: 0,
   }
 
-  for _, article := range *mainscreen.ArticlesDatasource {
+  for _, article := range *mainscreen.T.ArticlesDatasource {
     if selectedGroup == 0 ||
       (selectedGroup != 0 &&
         article.Newsgroup == previousGroupsList[selectedGroup]) {
@@ -163,10 +160,10 @@ func(mainscreen *Mainscreen) Refresh() {
 
 func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
   switch event.Key() {
-  case tcell.KeyCtrlG:
+  case tcell.KeyCtrlG, tcell.KeyLeft:
     mainscreen.T.App.SetFocus(mainscreen.Groups)
     return nil
-  case tcell.KeyCtrlL:
+  case tcell.KeyCtrlL, tcell.KeyRight:
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
   case tcell.KeyRune:

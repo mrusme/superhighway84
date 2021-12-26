@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"log"
 	"sync"
 
 	orbitdb "berty.tech/go-orbit-db"
@@ -57,38 +56,15 @@ func (db *Database)init() (error) {
     return err
   }
 
-  addr, err := db.OrbitDB.DetermineAddress(db.ctx, db.Name, "docstore", &orbitdb.DetermineAddressOptions{})
-  if err != nil {
-    return err
-  }
-  db.URI = addr.String()
+  // addr, err := db.OrbitDB.DetermineAddress(db.ctx, db.Name, "docstore", &orbitdb.DetermineAddressOptions{})
+  // if err != nil {
+  //   return err
+  // }
+  // db.URI = addr.String()
 
+  storetype := "docstore"
   db.Store, err = db.OrbitDB.Docs(db.ctx, db.Name, &orbitdb.CreateDBOptions{
     AccessController: ac,
-    StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
-  })
-  if err != nil {
-    return err
-  }
-
-  db.StoreEventChan = db.Store.Subscribe(db.ctx)
-  return nil
-}
-
-func (db *Database)open() (error) {
-  var err error
-
-  db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSNode, &orbitdb.NewOrbitDBOptions{
-    Directory: &db.Cache,
-  })
-  if err != nil {
-    return err
-  }
-
-  create := false
-  storetype := "docstore"
-  dbstore, err := db.OrbitDB.Open(db.ctx, db.URI, &orbitdb.CreateDBOptions{
-    Create: &create,
     StoreType: &storetype,
     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
   })
@@ -96,11 +72,46 @@ func (db *Database)open() (error) {
     return err
   }
 
-  db.Store = dbstore.(orbitdb.DocumentStore)
-
   db.StoreEventChan = db.Store.Subscribe(db.ctx)
   return nil
 }
+
+// func (db *Database)open() (error) {
+//   var err error
+//
+//   db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSNode, &orbitdb.NewOrbitDBOptions{
+//     Directory: &db.Cache,
+//     Logger: db.Logger,
+//   })
+//   if err != nil {
+//     return err
+//   }
+//
+//   ac := &accesscontroller.CreateAccessControllerOptions{
+//     Access: map[string][]string{
+//       "write": {
+//         "*",
+//       },
+//     },
+//   }
+//
+//   // create := false
+//   storetype := "docstore"
+//   dbstore, err := db.OrbitDB.Docs(db.ctx, db.URI, &orbitdb.CreateDBOptions{
+//     AccessController: ac,
+//     // Create: &create,
+//     StoreType: &storetype,
+//     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
+//   })
+//   if err != nil {
+//     return err
+//   }
+//
+//   db.Store = dbstore.(orbitdb.DocumentStore)
+//
+//   db.StoreEventChan = db.Store.Subscribe(db.ctx)
+//   return nil
+// }
 
 func(db *Database) connectToPeers() error {
 	var wg sync.WaitGroup
@@ -131,13 +142,14 @@ func NewDatabase(
   dbURI string,
   dbCache string,
   dbInit bool,
+  dbName string,
   logger *zap.Logger,
 ) (*Database, error) {
   var err error
 
   db := new(Database)
   db.ctx = ctx
-  db.Name = "sync-test"
+  db.Name = dbName
   db.Init = dbInit
   db.URI = dbURI
   db.Cache = dbCache
@@ -160,26 +172,20 @@ func NewDatabase(
   return db, nil
 }
 
-func (db *Database) Connect(onReady func()) (error) {
+func (db *Database) Connect(onReady func(address string)) (error) {
   var err error
 
-  if db.Init {
+  // if db.Init {
     err = db.init()
     if err != nil {
       return err
     }
-  } else {
-    err = db.open()
-    if err != nil {
-      return err
-    }
-  }
-
-  // log.Println(db.Store.ReplicationStatus().GetBuffered())
-  // log.Println(db.Store.ReplicationStatus().GetQueued())
-  // log.Println(db.Store.ReplicationStatus().GetProgress())
-
-  db.Logger.Info("running ...")
+  // } else {
+  //   err = db.open()
+  //   if err != nil {
+  //     return err
+  //   }
+  // }
 
 	// go func() {
 		err = db.connectToPeers()
@@ -190,13 +196,20 @@ func (db *Database) Connect(onReady func()) (error) {
     }
 	// }()
 
+  // log.Println(db.Store.ReplicationStatus().GetBuffered())
+  // log.Println(db.Store.ReplicationStatus().GetQueued())
+  // log.Println(db.Store.ReplicationStatus().GetProgress())
+
+  db.Logger.Info("running ...")
+
+
   go func() {
     for {
       for ev := range db.StoreEventChan {
-        log.Printf("GOT EVENT %+v\n", ev)
+        db.Logger.Debug("got event", zap.Any("event", ev))
         switch ev.(type) {
         case *stores.EventReady:
-          onReady()
+          onReady(db.Store.Address().String())
         }
       }
     }
