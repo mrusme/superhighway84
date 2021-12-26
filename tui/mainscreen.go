@@ -129,7 +129,8 @@ func(mainscreen *Mainscreen) Refresh() {
     Index: 0,
   }
 
-  for _, article := range *mainscreen.T.ArticlesDatasource {
+  for i := 0; i < len(*mainscreen.T.ArticlesDatasource); i++ {
+    article := (*mainscreen.T.ArticlesDatasource)[i]
     if selectedGroup == 0 ||
       (selectedGroup != 0 &&
         article.Newsgroup == previousGroupsList[selectedGroup]) {
@@ -140,7 +141,7 @@ func(mainscreen *Mainscreen) Refresh() {
     if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
       mainscreen.GroupsList = append(mainscreen.GroupsList, article.Newsgroup)
       mainscreen.GroupsMap[article.Newsgroup] = GroupMapEntry{
-        Index: (mainscreen.Groups.GetItemCount() - 1),
+        Index: 0,
       }
     }
   }
