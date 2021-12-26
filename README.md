@@ -1,6 +1,6 @@
 [![Superhighway84](superhighway84.jpeg)](superhighway84.png)
 
-<pre align="center">
+<pre style="width: 80ch; margin: 0 auto;">
 ===============================================================================
                        INTERACTIVE ASYNC / FULL DUPLEX
 ===============================================================================
