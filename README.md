@@ -38,7 +38,11 @@ fastest decentralized, usenet-inspired communications platform available. It is
                          It should cost a lot more than $0.
 
 
+```
 
+![Screenshot](screenshot01.png)
+
+```
 
 INSTALLATION
 ------------
