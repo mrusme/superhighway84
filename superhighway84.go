@@ -44,7 +44,7 @@ func main() {
 
   var articles []models.Article
 
-  TUI := tui.Init(&EMBEDFS)
+  TUI := tui.Init(&EMBEDFS, logger)
   TUI.ArticlesDatasource = &articles
 
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)
