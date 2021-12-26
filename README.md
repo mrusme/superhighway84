@@ -63,7 +63,20 @@ Simply launch the binary:
 
 $ ./superhighway84
 
-A setup wizard will help you with initial configuration.
+A setup wizard will help you with initial configuration. Please make sure to
+have at least HOME and EDITOR exported in your environment.
+
+
+
+USAGE
+-----
+
+Keyboard shortcuts:
+
+- C-R: Refresh
+- C-G, Left: Focus groups list
+- C-L, Right: Focus articles list
+- C-Q: Quit
 
 
 
