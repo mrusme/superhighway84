@@ -16,7 +16,7 @@
                    /_/                  /___/                /___/
 
 
-         ::: DECENTRALIZED USENET-INSPIRED COMMUNICATIONS PLATFORM :::
+       ::: USENET-INSPIRED DECENTRALIZED INTERNET DISCUSSION SYSTEM :::
 
 
   The V.H.S. (Very High Speed) Superhighway84 platform is more than just the
@@ -32,6 +32,47 @@ fastest decentralized, usenet-inspired communications platform available. It is
                               Network Diagnostics
                                  Fallback Mode
                                     And More!
+
+
+      The Superhighway84 modern decentralized internet discussion system.
+                         It should cost a lot more than $0.
+
+
+
+
+INSTALLATION
+------------
+
+Clone this repository and run:
+
+$ go build .
+
+The binary will be available at ./superhighway84 and can be moved wherever you
+please.
+
+
+
+RUNNING
+-------
+
+Simply launch the binary:
+
+$ ./superhighway84
+
+A setup wizard will help you with initial configuration.
+
+
+
+KNOWN LIMITATIONS
+-----------------
+
+- The OrbitDB that Superhighway84 uses is a public database, meaning everyone
+  can alter its data. Since its using a standard _docstore_, PUT and DELETE
+  events can alter existing data. This issue will be solved in the future by
+  customizing the store to ignore these types of events.
+
+- Probably plenty more that have yet to been found...
+
 ```
 
 **Credits**
