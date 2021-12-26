@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"log"
-	"os"
 
 	"github.com/mrusme/superhighway84/database"
 	"github.com/mrusme/superhighway84/models"
@@ -30,28 +29,15 @@ func main() {
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel()
 
-  dbInit := false
-  dbInitValue := os.Getenv("SUPERHIGHWAY84_DB_INIT")
-  if dbInitValue == "1" {
-    dbInit = true
+  cfg, err := LoadConfig()
+  if err != nil {
+    log.Panicln(err)
+  }
+  if cfg.WasSetup() == false {
+    cfg.Setup()
   }
 
-  dbName := os.Getenv("SUPERHIGHWAY84_DB_NAME")
-  if dbInit == true && dbName == "" {
-    log.Panicln("SUPERHIGHWAY84_DB_NAME missing!")
-  }
-
-  dbURI := os.Getenv("SUPERHIGHWAY84_DB_URI")
-  if dbInit == false && dbURI == "" {
-    log.Panicln("SUPERHIGHWAY84_DB_URI missing!")
-  }
-
-  dbCache := os.Getenv("SUPERHIGHWAY84_DB_CACHE")
-  if dbCache == "" {
-    log.Panicln("SUPERHIGHWAY84_DB_CACHE missing!")
-  }
-
-  logger, err := NewLogger(os.Getenv("LOGFILE"))
+  logger, err := NewLogger(cfg.Logfile)
   if err != nil {
     log.Panicln(err)
   }
@@ -61,7 +47,7 @@ func main() {
   TUI := tui.Init(&EMBEDFS)
   TUI.ArticlesDatasource = &articles
 
-  db, err := database.NewDatabase(ctx, dbURI, dbCache, dbInit, dbName, logger)
+  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)
   if err != nil {
     log.Panicln(err)
   }

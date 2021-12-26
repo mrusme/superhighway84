@@ -21,8 +21,7 @@ import (
 
 type Database struct {
   ctx                 context.Context
-  Name                string
-  Init                bool
+  ConnectionString    string
   URI                 string
   Cache               string
 
@@ -33,7 +32,7 @@ type Database struct {
   StoreEventChan      <-chan events.Event
 }
 
-func (db *Database)init() (error) {
+func (db *Database) init() (error) {
   var err error
 
   db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSNode, &orbitdb.NewOrbitDBOptions{
@@ -63,7 +62,7 @@ func (db *Database)init() (error) {
   // db.URI = addr.String()
 
   storetype := "docstore"
-  db.Store, err = db.OrbitDB.Docs(db.ctx, db.Name, &orbitdb.CreateDBOptions{
+  db.Store, err = db.OrbitDB.Docs(db.ctx, db.ConnectionString, &orbitdb.CreateDBOptions{
     AccessController: ac,
     StoreType: &storetype,
     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
@@ -75,43 +74,6 @@ func (db *Database)init() (error) {
   db.StoreEventChan = db.Store.Subscribe(db.ctx)
   return nil
 }
-
-// func (db *Database)open() (error) {
-//   var err error
-//
-//   db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSNode, &orbitdb.NewOrbitDBOptions{
-//     Directory: &db.Cache,
-//     Logger: db.Logger,
-//   })
-//   if err != nil {
-//     return err
-//   }
-//
-//   ac := &accesscontroller.CreateAccessControllerOptions{
-//     Access: map[string][]string{
-//       "write": {
-//         "*",
-//       },
-//     },
-//   }
-//
-//   // create := false
-//   storetype := "docstore"
-//   dbstore, err := db.OrbitDB.Docs(db.ctx, db.URI, &orbitdb.CreateDBOptions{
-//     AccessController: ac,
-//     // Create: &create,
-//     StoreType: &storetype,
-//     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
-//   })
-//   if err != nil {
-//     return err
-//   }
-//
-//   db.Store = dbstore.(orbitdb.DocumentStore)
-//
-//   db.StoreEventChan = db.Store.Subscribe(db.ctx)
-//   return nil
-// }
 
 func(db *Database) connectToPeers() error {
 	var wg sync.WaitGroup
@@ -139,19 +101,15 @@ func(db *Database) connectToPeers() error {
 
 func NewDatabase(
   ctx context.Context,
-  dbURI string,
+  dbConnectionString string,
   dbCache string,
-  dbInit bool,
-  dbName string,
   logger *zap.Logger,
 ) (*Database, error) {
   var err error
 
   db := new(Database)
   db.ctx = ctx
-  db.Name = dbName
-  db.Init = dbInit
-  db.URI = dbURI
+  db.ConnectionString = dbConnectionString
   db.Cache = dbCache
   db.Logger = logger
 
@@ -202,14 +160,14 @@ func (db *Database) Connect(onReady func(address string)) (error) {
 
   db.Logger.Info("running ...")
 
-
   go func() {
     for {
       for ev := range db.StoreEventChan {
         db.Logger.Debug("got event", zap.Any("event", ev))
         switch ev.(type) {
         case *stores.EventReady:
-          onReady(db.Store.Address().String())
+          db.URI = db.Store.Address().String()
+          onReady(db.URI)
         }
       }
     }
