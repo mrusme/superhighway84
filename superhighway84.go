@@ -64,6 +64,7 @@ func main() {
     "alt.tv.simpsons",
   }
 
+  // ======================== TESTING ===============================
   go func() {
     for i := 0; i < 100; i++ {
       grp := mockGroups[(rand.Intn(len(mockGroups) - 1))]
@@ -78,6 +79,7 @@ func main() {
       articles = append(articles, art1)
     }
   }()
+  // ======================== /TESTING ==============================
 
   TUI := tui.Init(&EMBEDFS, &articles)
 

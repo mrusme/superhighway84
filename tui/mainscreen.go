@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"sort"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
@@ -86,7 +88,6 @@ func(mainscreen *Mainscreen) Refresh() {
   mainscreen.Groups.Clear()
   mainscreen.Articles.Clear()
 
-  mainscreen.Groups.AddItem("*", "", 0, nil)
   mainscreen.GroupsList = append(mainscreen.GroupsList, "*")
   mainscreen.GroupsMap["*"] = GroupMapEntry{
     Index: 0,
@@ -100,12 +101,19 @@ func(mainscreen *Mainscreen) Refresh() {
     }
 
     if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
-      mainscreen.Groups.AddItem(article.Newsgroup, "", 0, nil)
       mainscreen.GroupsList = append(mainscreen.GroupsList, article.Newsgroup)
       mainscreen.GroupsMap[article.Newsgroup] = GroupMapEntry{
         Index: (mainscreen.Groups.GetItemCount() - 1),
       }
     }
+  }
+
+  sort.Strings(mainscreen.GroupsList)
+  for idx, group := range mainscreen.GroupsList {
+    mainscreen.GroupsMap[group] = GroupMapEntry{
+      Index: idx,
+    }
+    mainscreen.Groups.AddItem(group, "", 0, nil)
   }
 
   mainscreen.Groups.SetCurrentItem(selectedGroup)
