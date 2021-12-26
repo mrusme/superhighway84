@@ -23,6 +23,8 @@ type TUI struct {
 
 type View interface {
   GetCanvas() (tview.Primitive)
+  GetDefaultFocus() (tview.Primitive)
+
   Refresh()
 
   HandleInput(event *tcell.EventKey) (*tcell.EventKey)
@@ -108,7 +110,10 @@ func (t *TUI) Launch() {
 
 func(t *TUI) SetView(name string, redraw bool) {
   t.ActiveView = name
-  t.App.SetRoot(t.Views[t.ActiveView].GetCanvas(), true)
+
+  t.App.SetRoot(t.Views[t.ActiveView].GetCanvas(), true).
+    SetFocus(t.Views[t.ActiveView].GetDefaultFocus())
+
   if redraw {
     t.App.Draw()
   }

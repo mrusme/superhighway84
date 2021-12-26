@@ -38,6 +38,10 @@ func (splashscreen *Splashscreen) GetCanvas() (tview.Primitive) {
   return splashscreen.Canvas
 }
 
+func (splashscreen *Splashscreen) GetDefaultFocus() (tview.Primitive) {
+  return splashscreen.Canvas
+}
+
 func(splashscreen *Splashscreen) Refresh() {
   _, _, w, h := splashscreen.Canvas.Box.GetRect()
 

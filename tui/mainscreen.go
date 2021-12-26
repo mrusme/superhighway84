@@ -79,6 +79,10 @@ func (mainscreen *Mainscreen) GetCanvas() (tview.Primitive) {
   return mainscreen.Canvas
 }
 
+func (mainscreen *Mainscreen) GetDefaultFocus() (tview.Primitive) {
+  return mainscreen.Articles
+}
+
 func(mainscreen *Mainscreen) Refresh() {
   selectedGroup := mainscreen.CurrentGroupSelected
   selectedArticle := mainscreen.CurrentArticleSelected
