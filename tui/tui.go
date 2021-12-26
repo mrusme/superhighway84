@@ -67,8 +67,6 @@ func (t *TUI) initInput() {
     default:
       return t.Views[t.ActiveView].HandleInput(event)
 		}
-
-		return event
 	})
 }
 

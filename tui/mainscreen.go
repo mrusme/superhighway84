@@ -1,6 +1,10 @@
 package tui
 
 import (
+	"io/ioutil"
+	"log"
+	"os"
+	"os/exec"
 	"sort"
 
 	"github.com/gdamore/tcell/v2"
@@ -24,8 +28,9 @@ type Mainscreen struct {
 
   GroupsMap map[string]GroupMapEntry
   GroupsList []string
-  ArticlesDatasource   *[]models.Article
 
+  ArticlesDatasource   *[]models.Article
+  ArticlesList []*models.Article
 }
 
 func(t *TUI) NewMainscreen(articlesDatasource *[]models.Article) (*Mainscreen) {
@@ -81,11 +86,11 @@ func(mainscreen *Mainscreen) Refresh() {
 
   previousGroupsList := mainscreen.GroupsList
   mainscreen.GroupsList = []string{}
-
   // previousGroupsMap := mainscreen.GroupsMap
   mainscreen.GroupsMap = make(map[string]GroupMapEntry)
-
   mainscreen.Groups.Clear()
+
+  mainscreen.ArticlesList = []*models.Article{}
   mainscreen.Articles.Clear()
 
   mainscreen.GroupsList = append(mainscreen.GroupsList, "*")
@@ -98,6 +103,7 @@ func(mainscreen *Mainscreen) Refresh() {
       (selectedGroup != 0 &&
         article.Newsgroup == previousGroupsList[selectedGroup]) {
       mainscreen.Articles.AddItem(article.Subject, article.From, 0, nil)
+      mainscreen.ArticlesList = append(mainscreen.ArticlesList, &article)
     }
 
     if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
@@ -151,7 +157,37 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
     case "group":
       mainscreen.Refresh()
     case "article":
-      // TODO: Load article
+      article := *mainscreen.ArticlesList[index]
+
+      tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
+      if err != nil {
+        // TODO: Show modal with error
+        return
+      }
+
+      defer os.Remove(tmpFile.Name())
+
+      tmpContent := []byte(article.Body)
+      if _, err = tmpFile.Write(tmpContent); err != nil {
+        // TODO: Show modal with error
+        return
+      }
+
+      if err := tmpFile.Close(); err != nil {
+        // TODO: Show modal with error
+        return
+      }
+
+      mainscreen.T.App.Suspend(func() {
+        cmd := exec.Command(os.Getenv("EDITOR"), tmpFile.Name())
+        cmd.Stdin = os.Stdin
+        cmd.Stdout = os.Stdout
+        err := cmd.Run()
+        if err != nil {
+          log.Println(err)
+        }
+        return
+      })
     }
   }
 }
