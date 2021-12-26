@@ -1,6 +1,6 @@
 [![Superhighway84](superhighway84.jpeg)](superhighway84.png)
 
-<pre style="width: 80ch; margin: 0 auto;">
+```
 ===============================================================================
                        INTERACTIVE ASYNC / FULL DUPLEX
 ===============================================================================
@@ -32,7 +32,7 @@ fastest decentralized, usenet-inspired communications platform available. It is
                               Network Diagnostics
                                  Fallback Mode
                                     And More!
-</pre>
+```
 
 **Credits**
 - Superhighway84 code & graphics by [@mrusme](https://github.com/mrusme)
