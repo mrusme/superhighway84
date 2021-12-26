@@ -7,6 +7,7 @@ import (
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
 	"go.uber.org/zap"
@@ -26,6 +27,7 @@ type TUI struct {
   CallbackRefreshArticles    func() (error)
   CallbackSubmitArticle      func(article *models.Article) (error)
 
+  Config                     *config.Config
   Logger                     *zap.Logger
 }
 
@@ -43,7 +45,7 @@ type ModalButton struct {
   Callback  func()
 }
 
-func Init(embedfs *embed.FS, logger *zap.Logger) (*TUI) {
+func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
   t := new(TUI)
 
   tview.Styles = tview.Theme{
@@ -61,6 +63,7 @@ func Init(embedfs *embed.FS, logger *zap.Logger) (*TUI) {
   }
 
   t.App = tview.NewApplication()
+  t.Config = cfg
   t.Logger = logger
 
   logoBytes, err := embedfs.ReadFile("superhighway84.jpeg")

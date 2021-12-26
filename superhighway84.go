@@ -8,6 +8,7 @@ import (
 
 	"log"
 
+	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/database"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/mrusme/superhighway84/tui"
@@ -29,7 +30,7 @@ func main() {
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel()
 
-  cfg, err := LoadConfig()
+  cfg, err := config.LoadConfig()
   if err != nil {
     log.Panicln(err)
   }
@@ -44,7 +45,7 @@ func main() {
 
   var articles []models.Article
 
-  TUI := tui.Init(&EMBEDFS, logger)
+  TUI := tui.Init(&EMBEDFS, cfg, logger)
   TUI.ArticlesDatasource = &articles
 
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)

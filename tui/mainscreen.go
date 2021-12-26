@@ -207,8 +207,8 @@ func(mainscreen *Mainscreen) submitNewArticle(group string) {
 
   newArticle.Subject = ""
   newArticle.Newsgroup = group
-  // TODO: newArticle.From =
-  // TODO: newArticle.Organisation =
+  newArticle.From = mainscreen.T.Config.Profile.From
+  newArticle.Organization = mainscreen.T.Config.Profile.Organization
   newArticle.Body = ""
 
   updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
@@ -245,8 +245,8 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   newArticle.Subject = fmt.Sprintf("Re: %s", article.Subject)
   newArticle.InReplyToID = article.ID
   newArticle.Newsgroup = article.Newsgroup
-  // TODO: newArticle.From =
-  // TODO: newArticle.Organisation =
+  newArticle.From = mainscreen.T.Config.Profile.From
+  newArticle.Organization = mainscreen.T.Config.Profile.Organization
   newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", MillisecondsToDate(article.Date), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
 
   updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
