@@ -53,10 +53,25 @@ func main() {
     log.Panicln(err)
   }
   defer db.Disconnect()
+
+  TUI.CallbackRefreshArticles = func() (error) {
+    articles, err = db.ListArticles()
+    return err
+  }
+  TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
+    return db.SubmitArticle(article)
+  }
+
   err = db.Connect(func(address string) {
-    //TUI.App.Stop()
     TUI.Views["mainscreen"].(*tui.Mainscreen).SetFooter(address)
     articles, _ = db.ListArticles()
+
+    time.Sleep(time.Second * 2)
+    TUI.SetView("mainscreen", true)
+
+    TUI.RefreshData()
+    TUI.Refresh()
+    TUI.App.Draw()
   })
   if err != nil {
     log.Panicln(err)
@@ -99,59 +114,7 @@ func main() {
   // }()
   // ======================== /TESTING ==============================
 
-  TUI.CallbackRefreshArticles = func() (error) {
-    articles, err = db.ListArticles()
-    return err
-  }
-  TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
-    return db.SubmitArticle(article)
-    // return nil
-  }
 
-  go func() {
-    time.Sleep(time.Second * 2)
-    TUI.SetView("mainscreen", true)
-    TUI.Refresh()
-  }()
   TUI.Launch()
-
-  // var input string
-  // for {
-  //   fmt.Scanln(&input)
-  //
-  //   switch input {
-  //   case "q":
-  //     return
-  //   case "g":
-  //     fmt.Scanln(&input)
-  //     article, err := db.GetArticleByID(input)
-  //     if err != nil {
-  //       log.Println(err)
-  //     } else {
-  //       log.Println(article)
-  //     }
-  //   case "p":
-  //     article := models.NewArticle()
-  //     article.From = "test@example.com"
-  //     article.Newsgroup = "comp.test"
-  //     article.Subject = "This is a test!"
-  //     article.Body = "Hey there, this is a test!"
-  //
-  //     err = db.SubmitArticle(article)
-  //     if err != nil {
-  //       log.Println(err)
-  //     } else {
-  //       log.Println(article)
-  //     }
-  //   case "l":
-  //     articles, err := db.ListArticles()
-  //     if err != nil {
-  //       log.Println(err)
-  //     } else {
-  //       log.Println(articles)
-  //     }
-  //   }
-  //
-  // }
 }
 

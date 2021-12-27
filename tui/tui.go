@@ -85,13 +85,10 @@ func (t *TUI) initInput() {
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlR:
-      if t.CallbackRefreshArticles != nil {
-        err := t.CallbackRefreshArticles()
-        if err != nil {
-          t.ShowErrorModal(err.Error())
-          return nil
-        }
+      if t.ActiveView == "splashscreen" {
+        return nil
       }
+      t.RefreshData()
       t.Refresh()
 			return nil
 		case tcell.KeyCtrlQ:
@@ -142,6 +139,15 @@ func(t *TUI) SetView(name string, redraw bool) {
 
 func (t *TUI) Refresh() {
   t.Views[t.ActiveView].Refresh()
+}
+
+func (t *TUI) RefreshData() {
+  if t.CallbackRefreshArticles != nil {
+    err := t.CallbackRefreshArticles()
+    if err != nil {
+      t.ShowErrorModal(err.Error())
+    }
+  }
 }
 
 func(t *TUI) ShowModal(text string, buttons map[string]ModalButton) {
