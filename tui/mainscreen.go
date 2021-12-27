@@ -47,7 +47,7 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
   mainscreen.T = t
 
   mainscreen.Groups = tview.NewList().
-    SetWrapAround(false).
+    SetWrapAround(true).
     ShowSecondaryText(false).
     SetHighlightFullLine(true).
     SetSelectedBackgroundColor(tcell.ColorHotPink).
@@ -161,20 +161,34 @@ func(mainscreen *Mainscreen) Refresh() {
 
 func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
   switch event.Key() {
-  case tcell.KeyCtrlG, tcell.KeyLeft:
+  case tcell.KeyCtrlH:
     mainscreen.T.App.SetFocus(mainscreen.Groups)
     return nil
-  case tcell.KeyCtrlL, tcell.KeyRight:
+  case tcell.KeyCtrlL:
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
   case tcell.KeyRune:
     switch unicode.ToLower(event.Rune()) {
     case 'n':
       mainscreen.submitNewArticle(mainscreen.GroupsList[mainscreen.CurrentGroupSelected])
+      return nil
     case 'r':
       mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
+      return nil
+    case 'j':
+       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
+       return nil
+    case 'k':
+       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyUp, 0, tcell.ModNone))
+       return nil
+    case 'h':
+       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyLeft, 0, tcell.ModNone))
+       return nil
+    case 'l':
+       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
+       return nil
     }
-    return nil
+    return event
   }
 
   return event
