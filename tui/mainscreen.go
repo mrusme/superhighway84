@@ -107,11 +107,11 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 		SetColumns(30, 0, 14).
 		SetBorders(false).
 		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
-    AddItem(mainscreen.Stats, 0, 2, 1, 1, 0, 0, false).
+    AddItem(mainscreen.Stats,  0, 2, 1, 1, 0, 0, false).
 		AddItem(mainscreen.Footer, 2, 0, 1, 3, 0, 0, false)
 
 	mainscreen.Canvas.
-    AddItem(mainscreen.Groups, 1, 0, 1, 1, 0, 0, false).
+    AddItem(mainscreen.Groups,   1, 0, 1, 1, 0, 0, false).
 		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false)
 
   return mainscreen
@@ -122,14 +122,20 @@ func (mainscreen *Mainscreen) SetFooter(text string) {
 }
 
 func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
-  peers := stats["peers"]
-  totalIn := float64(stats["total_in"]) / 1024.0 / 1024.0
+  peers    := stats["peers"]
+  totalIn  := float64(stats["total_in"])  / 1024.0 / 1024.0
   totalOut := float64(stats["total_out"]) / 1024.0 / 1024.0
-  rateIn := float64(stats["rate_in"]) / 1024.0 / 1024.0
-  rateOut := float64(stats["rate_out"]) / 1024.0 / 1024.0
+  rateIn   := float64(stats["rate_in"])   / 1024.0 / 1024.0
+  rateOut  := float64(stats["rate_out"])  / 1024.0 / 1024.0
 
   mainscreen.Stats.SetText(
-    fmt.Sprintf(STATS_TEMPLATE, peers, rateOut, rateIn, totalOut, totalIn),
+    fmt.Sprintf(STATS_TEMPLATE,
+      peers,
+      rateOut,
+      rateIn,
+      totalOut,
+      totalIn,
+    ),
   )
 }
 
