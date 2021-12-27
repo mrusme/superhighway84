@@ -18,6 +18,10 @@ func MillisecondsToDate(ms int64) (string) {
 }
 
 func (t *TUI) OpenArticle(article *models.Article) (models.Article, error) {
+  if editor, exist := os.LookupEnv("EDITOR"); exist == false || editor == "" {
+    return *article, errors.New("EDITOR environment variable not available, please export!")
+  }
+
   tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
   if err != nil {
     return *article, err
