@@ -146,6 +146,10 @@ func (t *TUI) Refresh() {
 
 func(t *TUI) ShowModal(text string, buttons map[string]ModalButton) {
   t.Modal = tview.NewModal().
+    SetTextColor(tcell.ColorBlack).
+    SetBackgroundColor(tcell.ColorTeal).
+    SetButtonBackgroundColor(tcell.ColorHotPink).
+    SetButtonTextColor(tcell.ColorWhite).
     SetText(text)
     // SetDoneFunc(func(buttonIndex int, buttonLabel string) {
     //   modalButton := buttons[buttonLabel]
