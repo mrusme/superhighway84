@@ -6,7 +6,10 @@ builds:
     goos:
       - darwin
       - linux
+      - netbsd
+      - openbsd
       - freebsd
+      - plan9
       - windows
     goarch:
       - 386
@@ -16,4 +19,15 @@ builds:
     goarm:
       - 6
       - 7
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: darwin
+        goarch: arm
+      - goos: netbsd
+        goarch: arm64
+      - goos: freebsd
+        goarm: arm64
+      - goos: plan0
+        goarm: arm64
 
