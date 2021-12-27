@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"embed"
-	"fmt"
 	"time"
 
 	"log"
@@ -21,7 +20,7 @@ var EMBEDFS embed.FS
 func NewLogger(filename string) (*zap.Logger, error) {
   cfg := zap.NewProductionConfig()
   cfg.OutputPaths = []string{
-    fmt.Sprintf("%s.log", filename),
+    filename,
   }
   return cfg.Build()
 }
