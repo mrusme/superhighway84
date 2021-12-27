@@ -54,6 +54,15 @@ $ go build .
 The binary will be available at ./superhighway84 and can be moved wherever you
 please.
 
+If you don't have IPFS installed already, make sure to do so in order to be able
+to initialize your IPFS repository:
+
+https://docs.ipfs.io/install/command-line/
+
+The IPFS repository can be initialized using the following command:
+
+$ ipfs init
+
 
 
 RUNNING
