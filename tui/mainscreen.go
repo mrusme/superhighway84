@@ -12,11 +12,19 @@ import (
 )
 
 var HEADER_LOGO =
-`[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]   [grey]⦿ %d PEERS[-]
-[teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]   [yellow]▲ %.2f[-] [grey]MB/s[-]
-[teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]   [teal]▼ %.2f[-] [grey]MB/s[-]
-[darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-]     [yellow]▲ %.2f[-] [grey]MB[-]
-[hotpink]                   /_/                  /___/                /___/[-]               [teal]▼ %.2f[-] [grey]MB[-]
+`[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]
+[teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]
+[teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]
+[darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-]
+[hotpink]                   /_/                  /___/                /___/[-]
+`
+
+var STATS_TEMPLATE =
+`[grey]⦿ %d PEERS[-]
+[yellow]▲ %.2f[-] [grey]MB/s[-]
+[teal]▼ %.2f[-] [grey]MB/s[-]
+[yellow]▲ %.2f[-] [grey]MB[-]
+[teal]▼ %.2f[-] [grey]MB[-]
 `
 
 type GroupMapEntry struct {
@@ -28,6 +36,7 @@ type Mainscreen struct {
   Canvas *tview.Grid
 
   Header *tview.TextView
+  Stats  *tview.TextView
   Footer *tview.TextView
 
   Groups *tview.List
@@ -80,6 +89,12 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetDynamicColors(true)
   mainscreen.Header.SetBorder(false)
 
+  mainscreen.Stats = tview.NewTextView().
+    SetText("").
+    SetTextColor(tcell.ColorHotPink).
+    SetDynamicColors(true)
+  mainscreen.Stats.SetBorder(false)
+
   mainscreen.Footer = tview.NewTextView().
     SetText("It really whips the llama's ass").
     SetTextColor(tcell.ColorHotPink).
@@ -89,13 +104,15 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 
 	mainscreen.Canvas = tview.NewGrid().
 		SetRows(5, 0, 1).
-		SetColumns(30, 0).
+		SetColumns(30, 0, 14).
 		SetBorders(false).
 		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
-		AddItem(mainscreen.Footer, 2, 0, 1, 2, 0, 0, false)
+    AddItem(mainscreen.Stats, 0, 2, 1, 1, 0, 0, false).
+		AddItem(mainscreen.Footer, 2, 0, 1, 3, 0, 0, false)
 
-	mainscreen.Canvas.AddItem(mainscreen.Groups, 1, 0, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Articles, 1, 1, 1, 1, 0, 0, false)
+	mainscreen.Canvas.
+    AddItem(mainscreen.Groups, 1, 0, 1, 1, 0, 0, false).
+		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false)
 
   return mainscreen
 }
@@ -111,8 +128,8 @@ func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
   rateIn := float64(stats["rate_in"]) / 1024.0 / 1024.0
   rateOut := float64(stats["rate_out"]) / 1024.0 / 1024.0
 
-  mainscreen.Header.SetText(
-    fmt.Sprintf(HEADER_LOGO, peers, rateOut, rateIn, totalOut, totalIn),
+  mainscreen.Stats.SetText(
+    fmt.Sprintf(STATS_TEMPLATE, peers, rateOut, rateIn, totalOut, totalIn),
   )
 }
 
