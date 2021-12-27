@@ -89,11 +89,7 @@ func (t *TUI) initInput() {
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlR:
-      if t.ActiveView == "splashscreen" {
-        return nil
-      }
-      t.RefreshData()
-      t.Refresh()
+      t.RefreshMainscreen()
 			return nil
 		case tcell.KeyCtrlQ:
 			t.App.Stop()
@@ -125,6 +121,13 @@ func (t *TUI) Launch() {
     t.App.Draw()
   }()
 
+  go func() {
+    for {
+      t.RefreshMainscreen()
+      time.Sleep(time.Second * 60)
+    }
+  }()
+
   if err := t.App.Run(); err != nil {
     panic(err)
   }
@@ -141,8 +144,18 @@ func(t *TUI) SetView(name string, redraw bool) {
   }
 }
 
+func (t *TUI) RefreshMainscreen() {
+  if t.ActiveView != "mainscreen" {
+    return
+  }
+  t.RefreshData()
+  t.Refresh()
+  return
+}
+
 func (t *TUI) Refresh() {
   t.Views[t.ActiveView].Refresh()
+  return
 }
 
 func (t *TUI) RefreshData() {
