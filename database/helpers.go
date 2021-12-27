@@ -53,7 +53,6 @@ func createNode(ctx context.Context, repoPath string) (icore.CoreAPI, error) {
 		return nil, err
 	}
 
-	// Attach the Core API to the constructed node
 	return coreapi.NewCoreAPI(node)
 }
 
