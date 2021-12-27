@@ -27,6 +27,8 @@ var STATS_TEMPLATE =
 [teal]▼ %.2f[-] [grey]MB[-]
 `
 
+var INFO_TEMPLATE = "%s"
+
 type GroupMapEntry struct {
   Index   int
 }
@@ -37,6 +39,7 @@ type Mainscreen struct {
 
   Header *tview.TextView
   Stats  *tview.TextView
+  Info   *tview.TextView
   Footer *tview.TextView
 
   Groups *tview.List
@@ -95,6 +98,13 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetDynamicColors(true)
   mainscreen.Stats.SetBorder(false)
 
+  mainscreen.Info = tview.NewTextView().
+    SetText("").
+    SetTextColor(tcell.ColorHotPink).
+    SetDynamicColors(true)
+  mainscreen.Info.SetBorder(false).
+    SetBorderPadding(0, 0, 1, 1)
+
   mainscreen.Footer = tview.NewTextView().
     SetText("It really whips the llama's ass").
     SetTextColor(tcell.ColorHotPink).
@@ -108,7 +118,8 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 		SetBorders(false).
 		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
     AddItem(mainscreen.Stats,  0, 2, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Footer, 2, 0, 1, 3, 0, 0, false)
+		AddItem(mainscreen.Info,   2, 0, 1, 1, 0, 0, false).
+		AddItem(mainscreen.Footer, 2, 1, 1, 2, 0, 0, false)
 
 	mainscreen.Canvas.
     AddItem(mainscreen.Groups,   1, 0, 1, 1, 0, 0, false).
@@ -135,6 +146,15 @@ func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
       rateIn,
       totalOut,
       totalIn,
+    ),
+  )
+}
+
+func (mainscreen *Mainscreen) SetInfo(info map[string]string) {
+  refresh := info["refresh"]
+  mainscreen.Info.SetText(
+    fmt.Sprintf(INFO_TEMPLATE,
+      refresh,
     ),
   )
 }

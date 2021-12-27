@@ -90,6 +90,7 @@ func (t *TUI) initInput() {
 		switch event.Key() {
 		case tcell.KeyCtrlR:
       t.RefreshMainscreen()
+      t.SetInfo(true)
 			return nil
 		case tcell.KeyCtrlQ:
 			t.App.Stop()
@@ -124,6 +125,7 @@ func (t *TUI) Launch() {
   go func() {
     for {
       t.RefreshMainscreen()
+      t.SetInfo(true)
       time.Sleep(time.Second * 60)
     }
   }()
@@ -206,6 +208,21 @@ func(t *TUI) ShowErrorModal(text string) {
         },
       },
     })
+}
+
+func (t *TUI) SetInfo(refresh bool) {
+  if refresh == true {
+    t.Views["mainscreen"].(*Mainscreen).SetInfo(map[string]string{
+      "refresh": "[green]◙[-]",
+    })
+    time.AfterFunc(time.Second * 3, func() {
+      t.SetInfo(false)
+    })
+  } else {
+    t.Views["mainscreen"].(*Mainscreen).SetInfo(map[string]string{
+      "refresh": "[grey]◙[-]",
+    })
+  }
 }
 
 func (t* TUI) SetStats(peers, rateIn, rateOut, totalIn, totalOut int64) () {
