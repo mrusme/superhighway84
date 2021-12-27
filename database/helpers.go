@@ -33,10 +33,10 @@ func setupPlugins(path string) error {
 	return nil
 }
 
-func createNode(ctx context.Context, repoPath string) (icore.CoreAPI, error) {
+func createNode(ctx context.Context, repoPath string) (*core.IpfsNode, icore.CoreAPI, error) {
 	repo, err := fsrepo.Open(repoPath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	nodeOptions := &core.BuildCfg{
@@ -50,10 +50,15 @@ func createNode(ctx context.Context, repoPath string) (icore.CoreAPI, error) {
 
 	node, err := core.NewNode(ctx, nodeOptions)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return coreapi.NewCoreAPI(node)
+  coreAPI, err := coreapi.NewCoreAPI(node)
+  if err != nil {
+    return nil, nil, err
+  }
+
+  return node, coreAPI, nil
 }
 
 func getUnixfsNode(path string) (files.Node, error) {

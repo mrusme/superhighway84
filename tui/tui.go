@@ -29,6 +29,8 @@ type TUI struct {
 
   Config                     *config.Config
   Logger                     *zap.Logger
+
+  Stats                      map[string]int64
 }
 
 type View interface {
@@ -65,6 +67,8 @@ func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
   t.App = tview.NewApplication()
   t.Config = cfg
   t.Logger = logger
+
+  t.Stats = make(map[string]int64)
 
   logoBytes, err := embedfs.ReadFile("superhighway84.jpeg")
   if err != nil {
@@ -190,3 +194,15 @@ func(t *TUI) ShowErrorModal(text string) {
       },
     })
 }
+
+func (t* TUI) SetStats(peers, rateIn, rateOut, totalIn, totalOut int64) () {
+  t.Stats["peers"] = peers
+  t.Stats["rate_in"] = rateIn
+  t.Stats["rate_out"] = rateOut
+  t.Stats["total_in"] = totalIn
+  t.Stats["total_out"] = totalOut
+
+  t.Views["mainscreen"].(*Mainscreen).SetStats(t.Stats)
+  t.App.Draw()
+}
+

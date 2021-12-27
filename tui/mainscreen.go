@@ -12,11 +12,11 @@ import (
 )
 
 var HEADER_LOGO =
-`    _  _ _ __ ____                  __   _      __                   ___  ____
-   /  / / // / __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /
-  _\ _\_\_\\_\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/
- /  / / // /___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/
-                   /_/                  /___/                /___/
+`[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]   [grey]⦿ %d PEERS[-]
+[teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]   [yellow]▲ %.2f[-] [grey]MB/s[-]
+[teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]   [teal]▼ %.2f[-] [grey]MB/s[-]
+[darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-]     [yellow]▲ %.2f[-] [grey]MB[-]
+[hotpink]                   /_/                  /___/                /___/[-]               [teal]▼ %.2f[-] [grey]MB[-]
 `
 
 type GroupMapEntry struct {
@@ -76,7 +76,8 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 
   mainscreen.Header = tview.NewTextView().
     SetText(HEADER_LOGO).
-    SetTextColor(tcell.ColorHotPink)
+    SetTextColor(tcell.ColorHotPink).
+    SetDynamicColors(true)
   mainscreen.Header.SetBorder(false)
 
   mainscreen.Footer = tview.NewTextView().
@@ -101,6 +102,18 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 
 func (mainscreen *Mainscreen) SetFooter(text string) {
   mainscreen.Footer.SetText(text)
+}
+
+func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
+  peers := stats["peers"]
+  totalIn := float64(stats["total_in"]) / 1024.0 / 1024.0
+  totalOut := float64(stats["total_out"]) / 1024.0 / 1024.0
+  rateIn := float64(stats["rate_in"]) / 1024.0 / 1024.0
+  rateOut := float64(stats["rate_out"]) / 1024.0 / 1024.0
+
+  mainscreen.Header.SetText(
+    fmt.Sprintf(HEADER_LOGO, peers, rateOut, rateIn, totalOut, totalIn),
+  )
 }
 
 func (mainscreen *Mainscreen) GetCanvas() (tview.Primitive) {

@@ -12,6 +12,7 @@ import (
 	"berty.tech/go-orbit-db/stores"
 	"berty.tech/go-orbit-db/stores/documentstore"
 	config "github.com/ipfs/go-ipfs-config"
+	"github.com/ipfs/go-ipfs/core"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/mitchellh/mapstructure"
@@ -27,7 +28,10 @@ type Database struct {
   Cache               string
 
   Logger              *zap.Logger
-  IPFSNode            icore.CoreAPI
+
+  IPFSNode            *core.IpfsNode
+  IPFSCoreAPI         icore.CoreAPI
+
   OrbitDB             orbitdb.OrbitDB
   Store               orbitdb.DocumentStore
   StoreEventChan      <-chan events.Event
@@ -36,7 +40,7 @@ type Database struct {
 func (db *Database) init() (error) {
   var err error
 
-  db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSNode, &orbitdb.NewOrbitDBOptions{
+  db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSCoreAPI, &orbitdb.NewOrbitDBOptions{
     Directory: &db.Cache,
     Logger: db.Logger,
   })
@@ -88,7 +92,7 @@ func(db *Database) connectToPeers() error {
 	for _, peerInfo := range peerInfos {
 		go func(peerInfo *peer.AddrInfo) {
 			defer wg.Done()
-			err := db.IPFSNode.Swarm().Connect(db.ctx, *peerInfo)
+			err := db.IPFSCoreAPI.Swarm().Connect(db.ctx, *peerInfo)
 			if err != nil {
         db.Logger.Debug("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
 			} else {
@@ -123,7 +127,7 @@ func NewDatabase(
 		return nil, err
 	}
 
-  db.IPFSNode, err = createNode(ctx, defaultPath)
+  db.IPFSNode, db.IPFSCoreAPI, err = createNode(ctx, defaultPath)
   if err != nil {
     return nil, err
   }

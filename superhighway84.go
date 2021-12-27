@@ -77,6 +77,19 @@ func main() {
   }
 
 
+  go func() {
+    peers := 0
+    for {
+      bw := db.IPFSNode.Reporter.GetBandwidthTotals()
+      connections, err := db.IPFSCoreAPI.Swarm().Peers(context.Background())
+      if err == nil {
+        peers = len(connections)
+      }
+      TUI.SetStats(int64(peers), int64(bw.RateIn), int64(bw.RateOut), bw.TotalIn , bw.TotalOut)
+      time.Sleep(time.Second * 5)
+    }
+  }()
+
   // ======================== TESTING ===============================
   // var articles []models.Article
   // mockGroups := []string{
