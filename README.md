@@ -75,6 +75,33 @@ $ ./superhighway84
 A setup wizard will help you with initial configuration. Please make sure to
 have at least HOME and EDITOR exported in your environment.
 
+In case you would like to use a dedicated ipfs repository for Superhighway84,
+you will have to export a different IPFS_PATH and make sure it was initialized
+beforehand:
+
+$ export IPFS_PATH=~/.ipfs-sh84
+$ ipfs init
+$ superhighway84
+
+In case you're intending to run the official IPFS daemon and Superhighway84 in
+parallel, be sure to adjust the ports in their respective IPFS repos (e.g.
+~/.ipfs and ~/.ipfs-sh84) so that they won't utilize the same port numbers.
+The ports 4001, 5001 and 8080 are relevant and should be adjusted to something
+other for every new repo/IPFS node that will run in parallel, e.g.:
+
+  "Addresses": {
+    "Swarm": [
+      "/ip4/0.0.0.0/tcp/4002",
+      "/ip6/::/tcp/4002",
+      "/ip4/0.0.0.0/udp/4002/quic",
+      "/ip6/::/udp/4002/quic"
+    ],
+    "Announce": [],
+    "NoAnnounce": [],
+    "API": "/ip4/127.0.0.1/tcp/5002",
+    "Gateway": "/ip4/127.0.0.1/tcp/8081"
+  },
+
 
 
 USAGE
