@@ -83,12 +83,11 @@ func (t *TUI) OpenArticle(article *models.Article) (models.Article, error) {
     }
   }
 
-  body := strings.TrimSpace(content[1])
-  // TODO: Perform more validations
-  if len(body) <= 1 {
-    return *article, errors.New("Invalid body")
+  newArticle.Body = strings.TrimSpace(content[1])
+
+  if valid, err := newArticle.IsValid(); valid == false {
+    return *article, err
   }
-  newArticle.Body = body
 
   return newArticle, nil
 }
