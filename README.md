@@ -68,7 +68,10 @@ $ ipfs init
 RUNNING
 -------
 
-Simply launch the binary:
+First, check ulimit -n and verify that it's at a reasonable amount. IPFS
+requires it to be large enough (>= 2048) in order to work properly over time.
+
+Afterwards you can simply launch the binary:
 
 $ ./superhighway84
 
@@ -101,6 +104,12 @@ other for every new repo/IPFS node that will run in parallel, e.g.:
     "API": "/ip4/127.0.0.1/tcp/5002",
     "Gateway": "/ip4/127.0.0.1/tcp/8081"
   },
+
+NOTE: When running Superhighway84 for the first time it might seem like it's
+"hanging" at the command prompt. Usually it isn't hanging but rather searching
+for peer it can connect to in order to synchronize the database. Depending on
+how many people are online, this process might take _some time_, please be
+patient.
 
 
 
