@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -33,10 +34,10 @@ func LoadConfig() (*Config, error) {
     if exist == false {
       return nil, errors.New("No XDG_CONFIG_HOME or HOME set!")
     }
-    configDir = fmt.Sprintf("%s/.config", configDir)
+    configDir = filepath.Join(configDir, ".config")
   }
 
-  configFile := fmt.Sprintf("%s/superhighway84.toml", configDir)
+  configFile := filepath.Join(configDir, "superhighway84.toml")
 
   f, err := os.OpenFile(configFile, os.O_CREATE|os.O_RDWR, 0644)
   if err != nil {
@@ -91,17 +92,17 @@ func (cfg *Config) Setup() (error) {
 
   cacheDir, exist := os.LookupEnv("XDG_CACHE_HOME")
   if exist == false {
-    cacheDir = fmt.Sprintf("%s/.cache", os.Getenv("HOME"))
+    cacheDir = filepath.Join(os.Getenv("HOME"), ".cache")
   }
 
-  defaultCachePath := fmt.Sprintf("%s/superhighway84", cacheDir)
+  defaultCachePath := filepath.Join(cacheDir, "superhighway84")
   fmt.Printf("Database cache path [%s]: ", defaultCachePath)
   fmt.Scanln(&cfg.CachePath)
   if strings.TrimSpace(cfg.CachePath) == "" {
     cfg.CachePath = defaultCachePath
   }
 
-  defaultLogfile := fmt.Sprintf("%s/superhighway84.log", cacheDir)
+  defaultLogfile := filepath.Join(cacheDir, "superhighway84.log")
   fmt.Printf("Logfile path [%s]: ", defaultLogfile)
   fmt.Scanln(&cfg.Logfile)
   if strings.TrimSpace(cfg.Logfile) == "" {
