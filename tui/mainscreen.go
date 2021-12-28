@@ -335,6 +335,10 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
     return
   }
 
+  if strings.TrimSpace(updatedNewArticle.Body) == strings.TrimSpace(newArticle.Body) {
+    return
+  }
+
   mainscreen.T.ShowModal(
     "Do you want to submit this reply?",
     map[string]ModalButton{
