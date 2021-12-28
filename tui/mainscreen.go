@@ -267,7 +267,7 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
     case "group":
       mainscreen.Refresh()
     case "article":
-      mainscreen.T.OpenArticle(mainscreen.ArticlesList[index])
+      mainscreen.T.OpenArticle(mainscreen.ArticlesList[index], true)
     }
   }
 }
@@ -281,7 +281,7 @@ func(mainscreen *Mainscreen) submitNewArticle(group string) {
   newArticle.Organization = mainscreen.T.Config.Profile.Organization
   newArticle.Body = ""
 
-  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
+  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle, false)
   if err != nil {
     mainscreen.T.ShowErrorModal(err.Error())
     return
@@ -319,7 +319,7 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   newArticle.Organization = mainscreen.T.Config.Profile.Organization
   newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", MillisecondsToDate(article.Date), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
 
-  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
+  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle, false)
   if err != nil {
     mainscreen.T.ShowErrorModal(err.Error())
     return

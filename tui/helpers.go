@@ -17,7 +17,7 @@ func MillisecondsToDate(ms int64) (string) {
   return time.Unix(0, ms * int64(time.Millisecond)).Format("Mon Jan _2 15:04:05 2006")
 }
 
-func (t *TUI) OpenArticle(article *models.Article) (models.Article, error) {
+func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Article, error) {
   if editor, exist := os.LookupEnv("EDITOR"); exist == false || editor == "" {
     return *article, errors.New("EDITOR environment variable not available, please export!")
   }
@@ -38,6 +38,10 @@ func (t *TUI) OpenArticle(article *models.Article) (models.Article, error) {
 
   if err := tmpFile.Close(); err != nil {
     return *article, err
+  }
+
+  if readOnly == true {
+    os.Chmod(tmpFile.Name(), 0400)
   }
 
   wasSuspended := t.App.Suspend(func() {
