@@ -190,7 +190,17 @@ func(mainscreen *Mainscreen) Refresh() {
     if selectedGroup == 0 ||
       (selectedGroup != 0 &&
         article.Newsgroup == previousGroupsList[selectedGroup]) {
-      mainscreen.Articles.AddItem(fmt.Sprintf("[teal]%s[-]", article.Subject), fmt.Sprintf("On [lightgray]%s[-] by %s", MillisecondsToDate(article.Date), article.From), 0, nil)
+      mainscreen.Articles.AddItem(
+        fmt.Sprintf(
+          "[teal]%s[-]",
+          article.Subject,
+        ),
+        fmt.Sprintf(
+          "On [lightgray]%s[-] by [lightgray]%s[-] in [lightgray]%s[-]",
+          MillisecondsToDate(article.Date),
+          article.From,
+          article.Newsgroup,
+        ), 0, nil)
       mainscreen.ArticlesList = append(mainscreen.ArticlesList, &article)
     }
 
