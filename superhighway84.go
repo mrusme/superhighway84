@@ -7,7 +7,6 @@ import (
 
 	"log"
 
-	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/database"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/mrusme/superhighway84/tui"
@@ -29,29 +28,24 @@ func main() {
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel()
 
-  cfg, err := config.LoadConfig()
-  if err != nil {
-    log.Panicln(err)
-  }
-  if cfg.WasSetup() == false {
-    cfg.Setup()
-  }
-
-  logger, err := NewLogger(cfg.Logfile)
+  logger, err := zap.NewProduction()
   if err != nil {
     log.Panicln(err)
   }
 
   var articles []models.Article
 
-  TUI := tui.Init(&EMBEDFS, cfg, logger)
+  TUI := tui.Init(&EMBEDFS,  logger)
   TUI.ArticlesDatasource = &articles
 
-  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)
+  log.Println("Starting a new database")
+  db, err := database.NewDatabase(ctx, "/orbitdb/bafyreifdpagppa7ve45odxuvudz5snbzcybwyfer777huckl4li4zbc5k4/superhighway84", "D://b", logger)
   if err != nil {
     log.Panicln(err)
   }
   defer db.Disconnect()
+
+  log.Println("Database created")
 
   TUI.CallbackRefreshArticles = func() (error) {
     articles, err = db.ListArticles()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"sort"
 	"sync"
+  "log"
 
 	orbitdb "berty.tech/go-orbit-db"
 	"berty.tech/go-orbit-db/accesscontroller"
@@ -149,7 +150,7 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   //     return err
   //   }
   // }
-
+  log.Println("Connecting..")
 	// go func() {
 		err = db.connectToPeers()
 		if err != nil {

@@ -47,7 +47,7 @@ type ModalButton struct {
   Callback  func()
 }
 
-func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
+func Init(embedfs *embed.FS,  logger *zap.Logger) (*TUI) {
   t := new(TUI)
 
   tview.Styles = tview.Theme{
@@ -65,7 +65,6 @@ func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
   }
 
   t.App = tview.NewApplication()
-  t.Config = cfg
   t.Logger = logger
 
   t.Stats = make(map[string]int64)

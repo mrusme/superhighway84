@@ -276,12 +276,12 @@ func(mainscreen *Mainscreen) submitNewArticle(group string) {
   newArticle := models.NewArticle()
 
   newArticle.Subject = ""
-  newArticle.Newsgroup = group
-  newArticle.From = mainscreen.T.Config.Profile.From
-  newArticle.Organization = mainscreen.T.Config.Profile.Organization
+  newArticle.Newsgroup = ""
+  newArticle.From = "nya"
+  newArticle.Organization = "su"
   newArticle.Body = ""
 
-  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
+  updatedNewArticle, err := mainscreen.T.OpenArticle2(newArticle)
   if err != nil {
     mainscreen.T.ShowErrorModal(err.Error())
     return
@@ -315,11 +315,11 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   newArticle.Subject = fmt.Sprintf("Re: %s", article.Subject)
   newArticle.InReplyToID = article.ID
   newArticle.Newsgroup = article.Newsgroup
-  newArticle.From = mainscreen.T.Config.Profile.From
-  newArticle.Organization = mainscreen.T.Config.Profile.Organization
+  newArticle.From = "nya"
+  newArticle.Organization = "su"
   newArticle.Body = fmt.Sprintf("\nOn %s %s wrote:\n> %s", MillisecondsToDate(article.Date), article.From, strings.Replace(article.Body, "\n", "\n> ", -1))
 
-  updatedNewArticle, err := mainscreen.T.OpenArticle(newArticle)
+  updatedNewArticle, err := mainscreen.T.OpenArticle2(newArticle)
   if err != nil {
     mainscreen.T.ShowErrorModal(err.Error())
     return

@@ -33,10 +33,10 @@ func LoadConfig() (*Config, error) {
     if exist == false {
       return nil, errors.New("No XDG_CONFIG_HOME or HOME set!")
     }
-    configDir = fmt.Sprintf("%s/.config", configDir)
+    configDir = fmt.Sprintf("%s\\.config", configDir)
   }
 
-  configFile := fmt.Sprintf("%s/superhighway84.toml", configDir)
+  configFile := fmt.Sprintf("%s\\superhighway84.toml", configDir)
 
   f, err := os.OpenFile(configFile, os.O_CREATE|os.O_RDWR, 0644)
   if err != nil {
@@ -91,17 +91,17 @@ func (cfg *Config) Setup() (error) {
 
   cacheDir, exist := os.LookupEnv("XDG_CACHE_HOME")
   if exist == false {
-    cacheDir = fmt.Sprintf("%s/.cache", os.Getenv("HOME"))
+    cacheDir = fmt.Sprintf("%s\\.cache", os.Getenv("HOME"))
   }
 
-  defaultCachePath := fmt.Sprintf("%s/superhighway84", cacheDir)
+  defaultCachePath := fmt.Sprintf("%s\\superhighway84", cacheDir)
   fmt.Printf("Database cache path [%s]: ", defaultCachePath)
   fmt.Scanln(&cfg.CachePath)
   if strings.TrimSpace(cfg.CachePath) == "" {
     cfg.CachePath = defaultCachePath
   }
 
-  defaultLogfile := fmt.Sprintf("%s/superhighway84.log", cacheDir)
+  defaultLogfile := fmt.Sprintf("%s\\superhighway84.log", cacheDir)
   fmt.Printf("Logfile path [%s]: ", defaultLogfile)
   fmt.Scanln(&cfg.Logfile)
   if strings.TrimSpace(cfg.Logfile) == "" {
