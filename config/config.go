@@ -36,6 +36,7 @@ func LoadConfig() (*Config, error) {
     }
     configDir = filepath.Join(configDir, ".config")
   }
+  os.MkdirAll(configDir, os.ModeDir)
 
   configFile := filepath.Join(configDir, "superhighway84.toml")
 
@@ -101,6 +102,7 @@ func (cfg *Config) Setup() (error) {
   if strings.TrimSpace(cfg.CachePath) == "" {
     cfg.CachePath = defaultCachePath
   }
+  os.MkdirAll(filepath.Dir(cfg.CachePath), os.ModeDir)
 
   defaultLogfile := filepath.Join(cacheDir, "superhighway84.log")
   fmt.Printf("Logfile path [%s]: ", defaultLogfile)
