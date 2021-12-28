@@ -20,11 +20,11 @@ var HEADER_LOGO =
 `
 
 var STATS_TEMPLATE =
-`[grey]⦿ %d PEERS[-]
-[yellow]▲ %.2f[-] [grey]MB/s[-]
-[teal]▼ %.2f[-] [grey]MB/s[-]
-[yellow]▲ %.2f[-] [grey]MB[-]
-[teal]▼ %.2f[-] [grey]MB[-]
+`[gray]⦿ %d PEERS[-]
+[yellow]▲ %.2f[-] [gray]MB/s[-]
+[teal]▼ %.2f[-] [gray]MB/s[-]
+[yellow]▲ %.2f[-] [gray]MB[-]
+[teal]▼ %.2f[-] [gray]MB[-]
 `
 
 var INFO_TEMPLATE = "%s"
@@ -62,9 +62,10 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetWrapAround(true).
     ShowSecondaryText(false).
     SetHighlightFullLine(true).
+    SetMainTextColor(tcell.ColorWhite).
     SetSelectedBackgroundColor(tcell.ColorHotPink).
     SetSelectedTextColor(tcell.ColorWhite).
-    SetSecondaryTextColor(tcell.ColorGrey).
+    SetSecondaryTextColor(tcell.ColorGray).
     SetChangedFunc(mainscreen.changeHandler("group")).
     SetSelectedFunc(mainscreen.selectHandler("group"))
   mainscreen.Groups.
@@ -76,9 +77,10 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetWrapAround(true).
     ShowSecondaryText(true).
     SetHighlightFullLine(true).
+    SetMainTextColor(tcell.ColorTeal).
     SetSelectedBackgroundColor(tcell.ColorHotPink).
     SetSelectedTextColor(tcell.ColorWhite).
-    SetSecondaryTextColor(tcell.ColorGrey).
+    SetSecondaryTextColor(tcell.ColorGray).
     SetChangedFunc(mainscreen.changeHandler("article")).
     SetSelectedFunc(mainscreen.selectHandler("article"))
   mainscreen.Articles.
@@ -192,11 +194,11 @@ func(mainscreen *Mainscreen) Refresh() {
         article.Newsgroup == previousGroupsList[selectedGroup]) {
       mainscreen.Articles.AddItem(
         fmt.Sprintf(
-          "[teal]%s[-]",
+          "%s",
           article.Subject,
         ),
         fmt.Sprintf(
-          "On [lightgray]%s[-] by [lightgray]%s[-] in [lightgray]%s[-]",
+          " on [darkgray]%s[-] by [darkgray]%s[-] in [darkgray]%s[-]",
           MillisecondsToDate(article.Date),
           article.From,
           article.Newsgroup,
