@@ -71,6 +71,18 @@ RUNNING
 First, check ulimit -n and verify that it's at a reasonable amount. IPFS
 requires it to be large enough (>= 2048) in order to work properly over time.
 
+Second, if your hardware shouldn't be a beefy computer but instead one of
+those flimsy MacBooks, older hardware, a Raspberry or a low-memory VPS it is
+advisable to set the previously created IPFS repository to the `lowpower`
+profile.
+
+$ ipfs config profile apply lowpower
+
+This should help with CPU usage, file descriptors and the amount of network
+connections. While during the startup period you might still see peers peaking
+between 1k and 3k, connections should ultimately settle somewhere between 100
+and 300 peers.
+
 Afterwards you can simply launch the binary:
 
 $ ./superhighway84
