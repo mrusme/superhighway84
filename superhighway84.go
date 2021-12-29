@@ -42,10 +42,12 @@ func main() {
     log.Panicln(err)
   }
 
-  var articles []models.Article
+  var articles []*models.Article
+  var articlesRoots []*models.Article
 
   TUI := tui.Init(&EMBEDFS, cfg, logger)
   TUI.ArticlesDatasource = &articles
+  TUI.ArticlesRoots = &articlesRoots
 
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)
   if err != nil {
@@ -54,7 +56,7 @@ func main() {
   defer db.Disconnect()
 
   TUI.CallbackRefreshArticles = func() (error) {
-    articles, err = db.ListArticles()
+    articles, articlesRoots, err = db.ListArticles()
     return err
   }
   TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
@@ -63,7 +65,7 @@ func main() {
 
   err = db.Connect(func(address string) {
     TUI.Views["mainscreen"].(*tui.Mainscreen).SetFooter(address)
-    articles, _ = db.ListArticles()
+    articles, articlesRoots, _ = db.ListArticles()
 
     time.Sleep(time.Second * 2)
     TUI.SetView("mainscreen", true)

@@ -214,8 +214,11 @@ func (db *Database) GetArticleByID(id string) (models.Article, error) {
   return article, nil
 }
 
-func (db *Database) ListArticles() ([]models.Article, error) {
-  var articles []models.Article
+func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error) {
+  var articles []*models.Article
+  var articlesMap map[string]*models.Article
+
+  articlesMap = make(map[string]*models.Article)
 
   _, err := db.Store.Query(db.ctx, func(e interface{})(bool, error) {
     entity := e.(map[string]interface{})
@@ -223,20 +226,36 @@ func (db *Database) ListArticles() ([]models.Article, error) {
       var article models.Article
       err := mapstructure.Decode(entity, &article)
       if err == nil {
-        articles = append(articles, article)
+        // TODO: Not sure why mapstructure won't convert this field and simply
+        //       leave it ""
+        if entity["in-reply-to-id"] != nil {
+          article.InReplyToID = entity["in-reply-to-id"].(string)
+        }
+        articles = append(articles, &article)
+        articlesMap[article.ID] = articles[(len(articles) - 1)]
       }
       return true, err
     }
     return false, nil
   })
   if err != nil {
-    return articles, err
+    return articles, nil, err
   }
 
   sort.SliceStable(articles, func(i, j int) bool {
     return articles[i].Date > articles[j].Date
   })
 
-  return articles, nil
+  var articlesRoots []*models.Article
+  for i := 0; i < len(articles); i++ {
+    if articles[i].InReplyToID != "" {
+      (*articlesMap[articles[i].InReplyToID]).Replies =
+        append((*articlesMap[articles[i].InReplyToID]).Replies, articles[i])
+    } else {
+      articlesRoots = append(articlesRoots, articles[i])
+    }
+  }
+
+  return articles, articlesRoots, nil
 }
 

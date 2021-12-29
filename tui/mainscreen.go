@@ -169,6 +169,63 @@ func (mainscreen *Mainscreen) GetDefaultFocus() (tview.Primitive) {
   return mainscreen.Articles
 }
 
+func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*models.Article, selectedGroup int, previousGroupsList []string) {
+  // fmt.Fprintf(os.Stderr, "%s Node has %d items\n", strings.Repeat(" ", level * 3), len(*articlesNode))
+
+  for i := 0; i < len(*articlesNode); i++ {
+    article := (*articlesNode)[i]
+
+    // fmt.Fprintf(os.Stderr, "%s   Item has ID %s and is in reply of ID %s and has %d replies\n", strings.Repeat(" ", level * 3), article.ID, article.InReplyToID, len(article.Replies))
+
+    if selectedGroup == 0 ||
+      (selectedGroup != 0 &&
+        article.Newsgroup == previousGroupsList[selectedGroup]) {
+
+      prefix := ""
+      if level > 0 {
+        if i < (len(*articlesNode) - 1) || len(article.Replies) > 0 {
+          prefix = "[gray]├[-]"
+        } else {
+          prefix = "[gray]└[-]"
+        }
+      }
+
+      prefixSub := " "
+      if len(article.Replies) > 0 || (level > 0 && i < (len(*articlesNode) - 1)) {
+        prefixSub = "[gray]│[-]"
+      }
+
+      mainscreen.Articles.AddItem(
+        fmt.Sprintf(
+          "%s%s%s",
+          prefix,
+          strings.Repeat(" ", level),
+          article.Subject,
+        ),
+        fmt.Sprintf(
+          "%s%s on [darkgray]%s[-] by [darkgray]%s[-] in [darkgray]%s[-]",
+          prefixSub,
+          strings.Repeat(" ", level),
+          MillisecondsToDate(article.Date),
+          article.From,
+          article.Newsgroup,
+        ), 0, nil)
+      mainscreen.ArticlesList = append(mainscreen.ArticlesList, article)
+
+      if len(article.Replies) > 0 {
+        mainscreen.addNodeToArticlesList((level + 1), &article.Replies, selectedGroup, previousGroupsList)
+      }
+    }
+
+    if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
+      mainscreen.GroupsList = append(mainscreen.GroupsList, article.Newsgroup)
+      mainscreen.GroupsMap[article.Newsgroup] = GroupMapEntry{
+        Index: 0,
+      }
+    }
+  }
+}
+
 func(mainscreen *Mainscreen) Refresh() {
   selectedGroup := mainscreen.CurrentGroupSelected
   selectedArticle := mainscreen.CurrentArticleSelected
@@ -187,32 +244,7 @@ func(mainscreen *Mainscreen) Refresh() {
     Index: 0,
   }
 
-  for i := 0; i < len(*mainscreen.T.ArticlesDatasource); i++ {
-    article := (*mainscreen.T.ArticlesDatasource)[i]
-    if selectedGroup == 0 ||
-      (selectedGroup != 0 &&
-        article.Newsgroup == previousGroupsList[selectedGroup]) {
-      mainscreen.Articles.AddItem(
-        fmt.Sprintf(
-          "%s",
-          article.Subject,
-        ),
-        fmt.Sprintf(
-          " on [darkgray]%s[-] by [darkgray]%s[-] in [darkgray]%s[-]",
-          MillisecondsToDate(article.Date),
-          article.From,
-          article.Newsgroup,
-        ), 0, nil)
-      mainscreen.ArticlesList = append(mainscreen.ArticlesList, &article)
-    }
-
-    if _, ok := mainscreen.GroupsMap[article.Newsgroup]; !ok {
-      mainscreen.GroupsList = append(mainscreen.GroupsList, article.Newsgroup)
-      mainscreen.GroupsMap[article.Newsgroup] = GroupMapEntry{
-        Index: 0,
-      }
-    }
-  }
+  mainscreen.addNodeToArticlesList(0, mainscreen.T.ArticlesRoots, selectedGroup, previousGroupsList)
 
   sort.Strings(mainscreen.GroupsList)
   for idx, group := range mainscreen.GroupsList {

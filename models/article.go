@@ -16,6 +16,8 @@ type Article struct {
   Date         int64     `mmapstructure:"date" json:"date" validate:"required,number"`
   Organization string    `mmapstructure:"organization" json:"organization" validate:"printascii"`
   Body         string    `mmapstructure:"body" json:"body" validate:"required,min=3,max=524288"`
+
+  Replies      []*Article `mmapstructure:"-" json:"-" validate:"-"`
 }
 
 func NewArticle() (*Article) {

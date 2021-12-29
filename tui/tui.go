@@ -22,7 +22,8 @@ type TUI struct {
   ModalVisible               bool
   ModalButtons               map[string]ModalButton
 
-  ArticlesDatasource         *[]models.Article
+  ArticlesDatasource         *[]*models.Article
+  ArticlesRoots              *[]*models.Article
 
   CallbackRefreshArticles    func() (error)
   CallbackSubmitArticle      func(article *models.Article) (error)
