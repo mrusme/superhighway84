@@ -59,7 +59,7 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
   mainscreen.T = t
 
   mainscreen.Groups = tview.NewList().
-    SetWrapAround(true).
+    SetWrapAround(false).
     ShowSecondaryText(false).
     SetHighlightFullLine(true).
     SetMainTextColor(tcell.ColorWhite).
@@ -74,7 +74,7 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetBorderColor(tcell.ColorTeal)
 
   mainscreen.Articles = tview.NewList().
-    SetWrapAround(true).
+    SetWrapAround(false).
     ShowSecondaryText(true).
     SetHighlightFullLine(true).
     SetMainTextColor(tcell.ColorTeal).
@@ -276,17 +276,23 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
       mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
       return nil
     case 'j':
-       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
-       return nil
+      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
+      return nil
     case 'k':
-       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyUp, 0, tcell.ModNone))
-       return nil
+      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyUp, 0, tcell.ModNone))
+      return nil
     case 'h':
-       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyLeft, 0, tcell.ModNone))
-       return nil
+      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyLeft, 0, tcell.ModNone))
+      return nil
     case 'l':
-       mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
-       return nil
+      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
+      return nil
+    case 'g':
+      if event.Rune() == 'G' {
+        mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
+      } else {
+        mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyHome, 0, tcell.ModNone))
+      }
     }
     return event
   }
