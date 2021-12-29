@@ -249,8 +249,10 @@ func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error)
   var articlesRoots []*models.Article
   for i := 0; i < len(articles); i++ {
     if articles[i].InReplyToID != "" {
-      (*articlesMap[articles[i].InReplyToID]).Replies =
-        append((*articlesMap[articles[i].InReplyToID]).Replies, articles[i])
+      if _, exist := articlesMap[articles[i].InReplyToID]; exist == true {
+        (*articlesMap[articles[i].InReplyToID]).Replies =
+          append((*articlesMap[articles[i].InReplyToID]).Replies, articles[i])
+      }
     } else {
       articlesRoots = append(articlesRoots, articles[i])
     }
