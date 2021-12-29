@@ -41,7 +41,7 @@ func createNode(ctx context.Context, repoPath string) (*core.IpfsNode, icore.Cor
 
 	nodeOptions := &core.BuildCfg{
 		Online:  true,
-		Routing: libp2p.DHTOption,
+		Routing: libp2p.DHTClientOption, // DHTOption
 		Repo: repo,
     ExtraOpts: map[string]bool{
       "pubsub": true,
