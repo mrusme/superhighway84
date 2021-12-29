@@ -44,6 +44,7 @@ type Mainscreen struct {
 
   Groups *tview.List
   Articles *tview.List
+  Preview  *tview.TextView
 
   CurrentGroupSelected int
   CurrentArticleSelected int
@@ -88,6 +89,14 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetBorderAttributes(tcell.AttrNone).
     SetBorderColor(tcell.ColorTeal)
 
+  mainscreen.Preview = tview.NewTextView().
+    SetText("").
+    SetTextColor(tcell.ColorWhite).
+    SetDynamicColors(true)
+  mainscreen.Preview.
+    SetBorder(true).
+    SetBorderColor(tcell.ColorTeal)
+
   mainscreen.Header = tview.NewTextView().
     SetText(HEADER_LOGO).
     SetTextColor(tcell.ColorHotPink).
@@ -115,17 +124,18 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
     SetBorderPadding(0, 0, 1, 1)
 
 	mainscreen.Canvas = tview.NewGrid().
-		SetRows(5, 0, 1).
+		SetRows(5, 0, 0, 1).
 		SetColumns(30, 0, 14).
 		SetBorders(false).
 		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
     AddItem(mainscreen.Stats,  0, 2, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Info,   2, 0, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Footer, 2, 1, 1, 2, 0, 0, false)
+		AddItem(mainscreen.Info,   3, 0, 1, 1, 0, 0, false).
+		AddItem(mainscreen.Footer, 3, 1, 1, 2, 0, 0, false)
 
 	mainscreen.Canvas.
-    AddItem(mainscreen.Groups,   1, 0, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false)
+    AddItem(mainscreen.Groups,   1, 0, 2, 1, 0, 0, false).
+		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false).
+		AddItem(mainscreen.Preview,  2, 1, 1, 2, 0, 0, false)
 
   return mainscreen
 }
@@ -203,12 +213,11 @@ func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*m
           article.Subject,
         ),
         fmt.Sprintf(
-          "%s%s on [darkgray]%s[-] by [darkgray]%s[-] in [darkgray]%s[-]",
+          "%s%s in %s by [darkgray]%s[-]",
           prefixSub,
           strings.Repeat(" ", level),
-          MillisecondsToDate(article.Date),
-          article.From,
           article.Newsgroup,
+          article.From,
         ), 0, nil)
       mainscreen.ArticlesList = append(mainscreen.ArticlesList, article)
 
@@ -256,6 +265,10 @@ func(mainscreen *Mainscreen) Refresh() {
 
   mainscreen.Groups.SetCurrentItem(selectedGroup)
   mainscreen.Articles.SetCurrentItem(selectedArticle)
+
+  mainscreen.changeHandler("group")(selectedGroup, "", "", 0)
+  mainscreen.changeHandler("article")(selectedArticle, "", "", 0)
+
   mainscreen.T.App.SetFocus(mainscreen.Articles)
 }
 
@@ -264,7 +277,10 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
   case tcell.KeyCtrlH:
     mainscreen.T.App.SetFocus(mainscreen.Groups)
     return nil
-  case tcell.KeyCtrlL:
+  case tcell.KeyCtrlJ:
+    mainscreen.T.App.SetFocus(mainscreen.Preview)
+    return nil
+  case tcell.KeyCtrlL, tcell.KeyCtrlK:
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
   case tcell.KeyRune:
@@ -306,7 +322,11 @@ func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string
     case "group":
       mainscreen.CurrentGroupSelected = index
     case "article":
+      if index < 0 || index >= len(mainscreen.ArticlesList) {
+        return
+      }
       mainscreen.CurrentArticleSelected = index
+      mainscreen.renderPreview(mainscreen.ArticlesList[index])
     }
   }
 }
@@ -320,6 +340,16 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
       mainscreen.T.OpenArticle(mainscreen.ArticlesList[index], true)
     }
   }
+}
+
+func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
+  mainscreen.Preview.SetText(fmt.Sprintf(
+    "[gray]Date:[-] [darkgray]%s[-]\n[gray]Newsgroup:[-] [darkgray]%s[-]\n\n\n%s",
+    MillisecondsToDate(article.Date),
+    article.Newsgroup,
+    article.Body,
+  ))
+  mainscreen.Preview.ScrollToBeginning()
 }
 
 func(mainscreen *Mainscreen) submitNewArticle(group string) {

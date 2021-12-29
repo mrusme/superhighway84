@@ -118,19 +118,20 @@ USAGE
 
 Keyboard shortcuts:
 
-- C-r: Refresh
-- C-h: Focus groups list
-- C-l: Focus articles list
-- C-q: Quit
--   k: Move up in list
--   j: Move down in list
--   h: Move left in list
--   l: Move right in list
--   g: Move to the beginning of the list
--   G: Move to the end of the list
--  CR: Select item in list
--   n: Publish new article
--   r: Reply to selected article
+     C-r: Refresh
+     C-h: Focus groups list
+C-l, C-k: Focus articles list
+     C-j: Focus preview pane
+     C-q: Quit
+       k: Move up in list
+       j: Move down in list
+       h: Move left in list
+       l: Move right in list
+       g: Move to the beginning of list/text
+       G: Move to the end of list/text
+      CR: Select item in list
+       n: Publish new article
+       r: Reply to selected article
 
 
 
