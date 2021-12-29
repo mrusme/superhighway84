@@ -34,6 +34,7 @@ type TUI struct {
   Stats                      map[string]int64
 
   Version                    string
+  VersionLatest              string
 }
 
 type View interface {
@@ -239,8 +240,9 @@ func (t* TUI) SetStats(peers, rateIn, rateOut, totalIn, totalOut int64) () {
   t.App.Draw()
 }
 
-func (t* TUI) SetVersion(version string) {
+func (t* TUI) SetVersion(version string, versionLatest string) {
   t.Version = version
-  t.Views["mainscreen"].(*Mainscreen).SetVersion(t.Version)
+  t.VersionLatest = versionLatest
+  t.Views["mainscreen"].(*Mainscreen).SetVersion(t.Version, t.VersionLatest)
 }
 

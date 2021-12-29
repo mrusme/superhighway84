@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"embed"
+	"encoding/json"
+	"net/http"
 	"net/url"
 	"os"
 	"runtime"
@@ -63,7 +65,7 @@ func main() {
   var articlesRoots []*models.Article
 
   TUI := tui.Init(&EMBEDFS, cfg, logger)
-  TUI.SetVersion(version)
+  TUI.SetVersion(version, getLatestVersion())
 
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
@@ -112,5 +114,24 @@ func main() {
   }()
 
   TUI.Launch()
+}
+
+
+func getLatestVersion() (string) {
+  var client = &http.Client{Timeout: 10 * time.Second}
+  r, err := client.Get(
+    "https://api.github.com/repos/mrusme/superhighway84/releases/latest",
+  )
+  if err != nil {
+      return version
+  }
+  defer r.Body.Close()
+  var result map[string]interface{}
+  json.NewDecoder(r.Body).Decode(&result)
+
+  if val, exist := result["tag_name"]; exist == true {
+    return val.(string)
+  }
+  return version
 }
 

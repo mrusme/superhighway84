@@ -16,7 +16,7 @@ var HEADER_LOGO =
 [teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]
 [teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]
 [darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-] [dimgray]%s[-]
-[hotpink]                   /_/                  /___/                /___/[-]
+[hotpink]                   /_/                  /___/                /___/[-]           [yellow]%s[-]
 `
 
 var STATS_TEMPLATE =
@@ -171,10 +171,22 @@ func (mainscreen *Mainscreen) SetInfo(info map[string]string) {
   )
 }
 
-func (mainscreen *Mainscreen) SetVersion(version string) {
+func (mainscreen *Mainscreen) SetVersion(version string, versionLatest string) {
+  v := version
+  if version == "v0.0.0" {
+    v = "DeLorean @ 1.21 Gigawatts"
+  }
+
+  l := ""
+  if versionLatest != version &&
+    version != "v0.0.0" {
+    l = fmt.Sprintf("%s update available!", versionLatest)
+  }
+
   mainscreen.Header.SetText(
     fmt.Sprintf(HEADER_LOGO,
-      version,
+      v,
+      l,
     ),
   )
 }
