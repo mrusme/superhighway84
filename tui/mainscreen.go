@@ -15,7 +15,7 @@ var HEADER_LOGO =
 `[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]
 [teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]
 [teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]
-[darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-]
+[darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-] [dimgray]%s[-]
 [hotpink]                   /_/                  /___/                /___/[-]
 `
 
@@ -167,6 +167,14 @@ func (mainscreen *Mainscreen) SetInfo(info map[string]string) {
   mainscreen.Info.SetText(
     fmt.Sprintf(INFO_TEMPLATE,
       refresh,
+    ),
+  )
+}
+
+func (mainscreen *Mainscreen) SetVersion(version string) {
+  mainscreen.Header.SetText(
+    fmt.Sprintf(HEADER_LOGO,
+      version,
     ),
   )
 }

@@ -19,6 +19,7 @@ import (
 
 //go:embed superhighway84.jpeg
 var EMBEDFS embed.FS
+var version = "v0.0.0"
 
 func NewLogger(filename string) (*zap.Logger, error) {
   if runtime.GOOS == "windows" {
@@ -62,6 +63,8 @@ func main() {
   var articlesRoots []*models.Article
 
   TUI := tui.Init(&EMBEDFS, cfg, logger)
+  TUI.SetVersion(version)
+
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
 
@@ -107,43 +110,6 @@ func main() {
       time.Sleep(time.Second * 5)
     }
   }()
-
-  // ======================== TESTING ===============================
-  // var articles []models.Article
-  // mockGroups := []string{
-  //   "comp.test",
-  //   "news.conspiracy",
-  //   "sci.physics",
-  //   "talk.lolz",
-  //   "sci.chemistry",
-  //   "talk.random",
-  //   "alt.anarchism",
-  //   "alt.tv.simpsons",
-  // }
-  //
-  // go func() {
-  //   var prev models.Article
-  //   for i := 0; i < 100; i++ {
-  //     grp := mockGroups[(rand.Intn(len(mockGroups) - 1))]
-  //
-  //     time.Sleep(time.Millisecond * 250)
-  //     art1 := *models.NewArticle()
-  //     art1.Subject = fmt.Sprintf("A test in %s", grp)
-  //     art1.Body = "This is just a test article\nWhat's up there?"
-  //     art1.From = "test@example.com"
-  //     art1.Newsgroup = grp
-  //
-  //     if prev.Newsgroup == art1.Newsgroup {
-  //       art1.InReplyToID = prev.ID
-  //       art1.Subject = fmt.Sprintf("Re: %s", prev.Subject)
-  //     }
-  //
-  //     articles = append(articles, art1)
-  //     prev = art1
-  //   }
-  // }()
-  // ======================== /TESTING ==============================
-
 
   TUI.Launch()
 }

@@ -32,6 +32,8 @@ type TUI struct {
   Logger                     *zap.Logger
 
   Stats                      map[string]int64
+
+  Version                    string
 }
 
 type View interface {
@@ -235,5 +237,10 @@ func (t* TUI) SetStats(peers, rateIn, rateOut, totalIn, totalOut int64) () {
 
   t.Views["mainscreen"].(*Mainscreen).SetStats(t.Stats)
   t.App.Draw()
+}
+
+func (t* TUI) SetVersion(version string) {
+  t.Version = version
+  t.Views["mainscreen"].(*Mainscreen).SetVersion(t.Version)
 }
 
