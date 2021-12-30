@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
@@ -57,6 +58,8 @@ type Mainscreen struct {
   GroupsList []string
 
   ArticlesList []*models.Article
+
+  MarkTimer *time.Timer
 }
 
 func(t *TUI) NewMainscreen() (*Mainscreen) {
@@ -357,7 +360,12 @@ func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string
       }
       mainscreen.CurrentArticleSelected = index
       mainscreen.renderPreview(mainscreen.ArticlesList[index])
-      mainscreen.markAsRead(index, mainscreen.ArticlesList[index])
+      if mainscreen.MarkTimer != nil {
+        mainscreen.MarkTimer.Stop()
+      }
+      mainscreen.MarkTimer = time.AfterFunc(time.Second * 2, func() {
+        mainscreen.markAsRead(index, mainscreen.ArticlesList[index])
+      })
     }
   }
 }
