@@ -384,6 +384,9 @@ func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
 }
 
 func(mainscreen *Mainscreen) markAsRead(index int, article *models.Article) {
+  if article.Read == true {
+    return
+  }
   article.Read = true
   mainText, secondaryText := mainscreen.Articles.GetItemText(index)
   updatedMainText := strings.Replace(

@@ -21,7 +21,10 @@ type Config struct {
   ConfigFile          string `toml:"-"`
 
   ConnectionString    string
+
   CachePath           string
+  ProgramCachePath    string
+
   Logfile             string
 
   Profile             ConfigProfile
@@ -96,13 +99,21 @@ func (cfg *Config) Setup() (error) {
     cacheDir = filepath.Join(os.Getenv("HOME"), ".cache")
   }
 
-  defaultCachePath := filepath.Join(cacheDir, "superhighway84")
-  fmt.Printf("Database cache path [%s]: ", defaultCachePath)
+  defaultDatabaseCachePath := filepath.Join(cacheDir, "superhighway84", "database")
+  fmt.Printf("Database cache path [%s]: ", defaultDatabaseCachePath)
   fmt.Scanln(&cfg.CachePath)
   if strings.TrimSpace(cfg.CachePath) == "" {
-    cfg.CachePath = defaultCachePath
+    cfg.CachePath = defaultDatabaseCachePath
   }
   os.MkdirAll(filepath.Dir(cfg.CachePath), 0755)
+
+  defaultProgramCachePath := filepath.Join(cacheDir, "superhighway84", "program")
+  fmt.Printf("Program cache path [%s]: ", defaultProgramCachePath)
+  fmt.Scanln(&cfg.ProgramCachePath)
+  if strings.TrimSpace(cfg.ProgramCachePath) == "" {
+    cfg.ProgramCachePath = defaultProgramCachePath
+  }
+  os.MkdirAll(filepath.Dir(cfg.ProgramCachePath), os.ModeDir)
 
   defaultLogfile := filepath.Join(cacheDir, "superhighway84.log")
   fmt.Printf("Logfile path [%s]: ", defaultLogfile)
