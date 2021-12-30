@@ -78,7 +78,7 @@ func main() {
   TUI.ArticlesRoots = &articlesRoots
 
 
-  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, cch, logger)
+  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.DatabaseCachePath, cch, logger)
   if err != nil {
     log.Panicln(err)
   }
