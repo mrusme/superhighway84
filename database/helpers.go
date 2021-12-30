@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,6 +13,7 @@ import (
 	"github.com/ipfs/go-ipfs/plugin/loader"
 	"github.com/ipfs/go-ipfs/repo/fsrepo"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"github.com/mitchellh/mapstructure"
 )
 
 func setupPlugins(path string) error {
@@ -75,10 +75,14 @@ func getUnixfsNode(path string) (files.Node, error) {
 	return f, nil
 }
 
-func structToMap(v interface{}) (map[string]interface{}) {
-  var vMap map[string]interface{}
-  data, _ := json.Marshal(v)
-  json.Unmarshal(data, &vMap)
-  return vMap
+func structToMap(v interface{}) (map[string]interface{}, error) {
+  vMap := &map[string]interface{}{}
+
+  err := mapstructure.Decode(v, &vMap)
+  if err != nil {
+    return nil, err
+  }
+
+  return *vMap, nil
 }
 

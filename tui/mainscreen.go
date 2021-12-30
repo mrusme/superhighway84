@@ -471,7 +471,7 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
         Rune: 'y',
         Callback: func() {
           if mainscreen.T.CallbackSubmitArticle != nil {
-            mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
+            err = mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
           }
           return
         },
@@ -482,6 +482,14 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
           return
         },
       },
-    })
+    },
+  )
+
+  if err != nil {
+    mainscreen.T.ShowErrorModal(err.Error())
+    return
+  }
+
+  return
 }
 

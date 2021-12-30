@@ -196,10 +196,13 @@ func (db *Database) Disconnect() {
 }
 
 func (db *Database) SubmitArticle(article *models.Article) (error) {
-  entity := structToMap(&article)
+  entity, err := structToMap(*article)
+  if err != nil {
+    return err
+  }
   entity["type"] = "article"
 
-  _, err := db.Store.Put(db.ctx, entity)
+  _, err = db.Store.Put(db.ctx, entity)
   return err
 }
 
