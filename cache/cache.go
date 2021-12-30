@@ -8,14 +8,16 @@ import (
 )
 
 type Cache struct {
-  db      *buntdb.DB
+  db               *buntdb.DB
+	dbPath           string
 }
 
-func NewCache() (*Cache, error) {
+func NewCache(dbPath string) (*Cache, error) {
   var err error
 
   cache := new(Cache)
-  cache.db, err = buntdb.Open(":memory:")
+	cache.dbPath = dbPath
+  cache.db, err = buntdb.Open(cache.dbPath)
   if err != nil {
     return nil, err
   }

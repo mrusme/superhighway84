@@ -62,7 +62,7 @@ func main() {
     log.Panicln(err)
   }
 
-  cch, err := cache.NewCache()
+  cch, err := cache.NewCache(cfg.ProgramCachePath)
   if err != nil {
     log.Panicln(err)
   }
@@ -76,7 +76,6 @@ func main() {
 
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
-
 
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.DatabaseCachePath, cch, logger)
   if err != nil {
