@@ -18,6 +18,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 
+	"github.com/mrusme/superhighway84/cache"
 	"github.com/mrusme/superhighway84/models"
 )
 
@@ -25,7 +26,8 @@ type Database struct {
   ctx                 context.Context
   ConnectionString    string
   URI                 string
-  Cache               string
+  CachePath           string
+  Cache               *cache.Cache
 
   Logger              *zap.Logger
 
@@ -41,7 +43,7 @@ func (db *Database) init() (error) {
   var err error
 
   db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSCoreAPI, &orbitdb.NewOrbitDBOptions{
-    Directory: &db.Cache,
+    Directory: &db.CachePath,
     Logger: db.Logger,
   })
   if err != nil {
@@ -108,6 +110,7 @@ func NewDatabase(
   ctx context.Context,
   dbConnectionString string,
   dbCache string,
+  cch *cache.Cache,
   logger *zap.Logger,
 ) (*Database, error) {
   var err error
@@ -115,7 +118,8 @@ func NewDatabase(
   db := new(Database)
   db.ctx = ctx
   db.ConnectionString = dbConnectionString
-  db.Cache = dbCache
+  db.CachePath = dbCache
+  db.Cache = cch
   db.Logger = logger
 
   defaultPath, err := config.PathRoot()
@@ -231,6 +235,7 @@ func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error)
         if entity["in-reply-to-id"] != nil {
           article.InReplyToID = entity["in-reply-to-id"].(string)
         }
+        db.Cache.LoadArticle(&article)
         articles = append(articles, &article)
         articlesMap[article.ID] = articles[(len(articles) - 1)]
       }

@@ -28,6 +28,10 @@ var STATS_TEMPLATE =
 `
 
 var INFO_TEMPLATE = "%s"
+const (
+  COLOR_SUBJECT_UNREAD = "teal"
+  COLOR_SUBJECT_READ   = "white"
+)
 
 type GroupMapEntry struct {
   Index   int
@@ -225,11 +229,17 @@ func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*m
         prefixSub = "[gray]│[-]"
       }
 
+      subjectColor := COLOR_SUBJECT_UNREAD
+      if article.Read == true {
+        subjectColor = COLOR_SUBJECT_READ
+      }
+
       mainscreen.Articles.AddItem(
         fmt.Sprintf(
-          "%s%s%s",
+          "%s%s[%s]%s[-]",
           prefix,
           strings.Repeat(" ", level),
+          subjectColor,
           article.Subject,
         ),
         fmt.Sprintf(
@@ -347,6 +357,7 @@ func(mainscreen *Mainscreen) changeHandler(item string)(func(int, string, string
       }
       mainscreen.CurrentArticleSelected = index
       mainscreen.renderPreview(mainscreen.ArticlesList[index])
+      mainscreen.markAsRead(index, mainscreen.ArticlesList[index])
     }
   }
 }
@@ -370,6 +381,19 @@ func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
     article.Body,
   ))
   mainscreen.Preview.ScrollToBeginning()
+}
+
+func(mainscreen *Mainscreen) markAsRead(index int, article *models.Article) {
+  article.Read = true
+  mainText, secondaryText := mainscreen.Articles.GetItemText(index)
+  updatedMainText := strings.Replace(
+    mainText,
+    fmt.Sprintf("[%s]", COLOR_SUBJECT_UNREAD),
+    fmt.Sprintf("[%s]", COLOR_SUBJECT_READ),
+    1,
+  )
+  mainscreen.Articles.SetItemText(index, updatedMainText, secondaryText)
+  mainscreen.T.Cache.StoreArticle(article)
 }
 
 func(mainscreen *Mainscreen) submitNewArticle(group string) {

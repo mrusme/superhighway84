@@ -7,6 +7,7 @@ import (
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/mrusme/superhighway84/cache"
 	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
@@ -29,6 +30,7 @@ type TUI struct {
   CallbackSubmitArticle      func(article *models.Article) (error)
 
   Config                     *config.Config
+  Cache                      *cache.Cache
   Logger                     *zap.Logger
 
   Stats                      map[string]int64
@@ -51,7 +53,7 @@ type ModalButton struct {
   Callback  func()
 }
 
-func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
+func Init(embedfs *embed.FS, cfg *config.Config, cch *cache.Cache, logger *zap.Logger) (*TUI) {
   t := new(TUI)
 
   tview.Styles = tview.Theme{
@@ -70,6 +72,7 @@ func Init(embedfs *embed.FS, cfg *config.Config, logger *zap.Logger) (*TUI) {
 
   t.App = tview.NewApplication()
   t.Config = cfg
+  t.Cache = cch
   t.Logger = logger
 
   t.Stats = make(map[string]int64)

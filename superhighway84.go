@@ -12,6 +12,7 @@ import (
 
 	"log"
 
+	"github.com/mrusme/superhighway84/cache"
 	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/database"
 	"github.com/mrusme/superhighway84/models"
@@ -61,16 +62,23 @@ func main() {
     log.Panicln(err)
   }
 
+  cch, err := cache.NewCache()
+  if err != nil {
+    log.Panicln(err)
+  }
+  defer cch.Close()
+
   var articles []*models.Article
   var articlesRoots []*models.Article
 
-  TUI := tui.Init(&EMBEDFS, cfg, logger)
+  TUI := tui.Init(&EMBEDFS, cfg, cch, logger)
   TUI.SetVersion(version, getLatestVersion())
 
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
 
-  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, logger)
+
+  db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.CachePath, cch, logger)
   if err != nil {
     log.Panicln(err)
   }

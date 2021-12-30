@@ -8,16 +8,17 @@ import (
 )
 
 type Article struct {
-  ID           string    `mmapstructure:"id" json:"id" validate:"uuid_rfc4122"`
-  InReplyToID  string    `mmapstructure:"in-reply-to-id" json:"in-reply-to-id" validate:"omitempty,uuid_rfc4122"`
-  From         string    `mmapstructure:"from" json:"from" validate:"required,printascii"`
-  Newsgroup    string    `mmapstructure:"newsgroup" json:"newsgroup" validate:"required,min=2,max=80,printascii,lowercase"`
-  Subject      string    `mmapstructure:"subject" json:"subject" validate:"required,min=2,max=128,printascii"`
-  Date         int64     `mmapstructure:"date" json:"date" validate:"required,number"`
-  Organization string    `mmapstructure:"organization" json:"organization" validate:"printascii"`
-  Body         string    `mmapstructure:"body" json:"body" validate:"required,min=3,max=524288"`
+  ID           string    `mmapstructure:"id" json:"-" validate:"uuid_rfc4122"`
+  InReplyToID  string    `mmapstructure:"in-reply-to-id" json:"-" validate:"omitempty,uuid_rfc4122"`
+  From         string    `mmapstructure:"from" json:"-" validate:"required,printascii"`
+  Newsgroup    string    `mmapstructure:"newsgroup" json:"-" validate:"required,min=2,max=80,printascii,lowercase"`
+  Subject      string    `mmapstructure:"subject" json:"-" validate:"required,min=2,max=128,printascii"`
+  Date         int64     `mmapstructure:"date" json:"-" validate:"required,number"`
+  Organization string    `mmapstructure:"organization" json:"-" validate:"printascii"`
+  Body         string    `mmapstructure:"body" json:"-" validate:"required,min=3,max=524288"`
 
   Replies      []*Article `mmapstructure:"-" json:"-" validate:"-"`
+  Read         bool      `mmapstructure:"-" json:"read" validate:"-"`
 }
 
 func NewArticle() (*Article) {
