@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -382,11 +383,14 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
 }
 
 func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
+  m := regexp.MustCompile(`(?m)^> (.*)\n`)
+  body := m.ReplaceAllString(article.Body, "[gray]> $1[-]\n")
+
   mainscreen.Preview.SetText(fmt.Sprintf(
     "[gray]Date:[-] [darkgray]%s[-]\n[gray]Newsgroup:[-] [darkgray]%s[-]\n\n\n%s",
     MillisecondsToDate(article.Date),
     article.Newsgroup,
-    article.Body,
+    body,
   ))
   mainscreen.Preview.ScrollToBeginning()
 }
