@@ -7,8 +7,8 @@ import (
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/mrusme/go-poolsuite"
 	"github.com/mrusme/superhighway84/cache"
+	"github.com/mrusme/superhighway84/common"
 	"github.com/mrusme/superhighway84/config"
 	"github.com/mrusme/superhighway84/models"
 	"github.com/rivo/tview"
@@ -40,9 +40,7 @@ type TUI struct {
   VersionLatest              string
 
   // The fun starts here
-  Poolsuite                  *poolsuite.Poolsuite
-  poolsuiteLoaded            bool
-  poolsuitePlaying           bool
+  Player                     *common.Player
 }
 
 type View interface {
@@ -97,19 +95,8 @@ func Init(embedfs *embed.FS, cfg *config.Config, cch *cache.Cache, logger *zap.L
   t.initInput()
 
   // The fun stuff
-  t.Poolsuite = poolsuite.NewPoolsuite()
-  t.poolsuiteLoaded = false
-  t.poolsuitePlaying = false
+  t.Player = common.NewPlayer()
   return t
-}
-
-func (t *TUI) poolsuitePlay() {
-  t.Poolsuite.Play(
-    t.Poolsuite.GetRandomTrackFromPlaylist(
-      t.Poolsuite.GetRandomPlaylist(),
-    ),
-    func() { t.poolsuitePlay() },
-  )
 }
 
 func (t *TUI) initInput() {
@@ -123,18 +110,7 @@ func (t *TUI) initInput() {
 			t.App.Stop()
       return nil
     case tcell.KeyF8:
-      if t.poolsuiteLoaded == false {
-        t.poolsuiteLoaded = true
-        t.Poolsuite.Load()
-      }
-
-      if t.poolsuitePlaying == false {
-        t.poolsuitePlay()
-        t.poolsuitePlaying = true
-      } else {
-        t.Poolsuite.PauseResume()
-        t.poolsuitePlaying = false
-      }
+      t.Player.Play()
       return nil
     default:
       if t.ModalVisible == true {
