@@ -20,7 +20,7 @@
 
 
   The V.H.S. (Very High Speed) Superhighway84 platform is more than just the
-fastest decentralized, usenet-inspired communications platform available. It is
+fastest decentralized, USENET-inspired communications platform available. It is
  also the first one to be based on the latest IPFS technology available today!
 
     Superhighway84 offers the most spectacular features under the Spectrum.
