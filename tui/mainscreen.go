@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/mrusme/superhighway84/models"
@@ -307,44 +306,39 @@ func(mainscreen *Mainscreen) Refresh() {
 }
 
 func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
-  switch event.Key() {
-  case tcell.KeyCtrlH:
+  action := mainscreen.T.getInputEvent(event)
+  switch action {
+  case "focus-groups":
     mainscreen.T.App.SetFocus(mainscreen.Groups)
     return nil
-  case tcell.KeyCtrlJ:
+  case "focus-preview":
     mainscreen.T.App.SetFocus(mainscreen.Preview)
     return nil
-  case tcell.KeyCtrlL, tcell.KeyCtrlK:
+  case "focus-articles":
     mainscreen.T.App.SetFocus(mainscreen.Articles)
     return nil
-  case tcell.KeyRune:
-    switch unicode.ToLower(event.Rune()) {
-    case 'n':
-      mainscreen.submitNewArticle(mainscreen.GroupsList[mainscreen.CurrentGroupSelected])
-      return nil
-    case 'r':
-      mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
-      return nil
-    case 'j':
-      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
-      return nil
-    case 'k':
-      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyUp, 0, tcell.ModNone))
-      return nil
-    case 'h':
-      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyLeft, 0, tcell.ModNone))
-      return nil
-    case 'l':
-      mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
-      return nil
-    case 'g':
-      if event.Rune() == 'G' {
-        mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
-      } else {
-        mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyHome, 0, tcell.ModNone))
-      }
-    }
-    return event
+  case "article-new":
+    mainscreen.submitNewArticle(mainscreen.GroupsList[mainscreen.CurrentGroupSelected])
+    return nil
+  case "article-reply":
+    mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
+    return nil
+  case "additional-key-down":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
+    return nil
+  case "additional-key-up":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyUp, 0, tcell.ModNone))
+    return nil
+  case "additional-key-left":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyLeft, 0, tcell.ModNone))
+    return nil
+  case "additional-key-right":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
+    return nil
+  case "additional-key-home":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
+  case "additional-key-end":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyHome, 0, tcell.ModNone))
   }
 
   return event

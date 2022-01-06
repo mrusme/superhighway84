@@ -128,7 +128,7 @@ patient.
 USAGE
 -----
 
-Keyboard shortcuts:
+The default keyboard shortcuts are:
 
      C-r: Refresh
      C-h: Focus groups list
@@ -145,6 +145,17 @@ C-l, C-k: Focus articles list
        n: Publish new article
        r: Reply to selected article
 
+However, you are free to customize these within your configuration file, under
+the section `Shortcuts`. The structure is as following:
+
+`<key code> = "event"`
+
+The key codes can be looked up under the following link:
+
+https://pkg.go.dev/github.com/gdamore/tcell/v2#Key
+
+For simple ASCII characters use their ASCII code, e.g. `114` for the character 
+`r`.
 
 
 KNOWN LIMITATIONS

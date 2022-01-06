@@ -7,14 +7,28 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ConfigProfile struct {
   From                string
   Organization        string
+}
+
+type ConfigShortcuts struct {
+  Refresh             int64
+  Quit                int64
+
+  FocusGroups         int64
+  FocusArticles       int64
+  FocusPreviews       int64
+
+  NewArticle          int64
+  ReplyToArticle      int64
 }
 
 type Config struct {
@@ -29,6 +43,8 @@ type Config struct {
   Logfile             string
 
   Profile             ConfigProfile
+
+  Shortcuts           map[string]string
 }
 
 func LoadConfig() (*Config, error) {
@@ -56,10 +72,39 @@ func LoadConfig() (*Config, error) {
   }
 
   cfg := new(Config)
+  cfg.Shortcuts = make(map[string]string)
   _, err = toml.Decode(string(configFileContent), &cfg)
 
   cfg.ConfigFile = configFile
+  err = cfg.LoadDefaults()
+  if err != nil {
+    return nil, err
+  }
   return cfg, nil
+}
+
+func (cfg *Config) LoadDefaults() (error) {
+  if len(cfg.Shortcuts) == 0 {
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlQ), 10)] = "quit"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlR), 10)] = "refresh"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlH), 10)] = "focus-groups"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlL), 10)] = "focus-articles"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlK), 10)] = "focus-articles"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlJ), 10)] = "focus-preview"
+    cfg.Shortcuts[strconv.FormatInt(int64('n'), 10)] = "article-new"
+    cfg.Shortcuts[strconv.FormatInt(int64('r'), 10)] = "article-reply"
+
+    cfg.Shortcuts[strconv.FormatInt(int64('h'), 10)] = "additional-key-left"
+    cfg.Shortcuts[strconv.FormatInt(int64('j'), 10)] = "additional-key-down"
+    cfg.Shortcuts[strconv.FormatInt(int64('k'), 10)] = "additional-key-up"
+    cfg.Shortcuts[strconv.FormatInt(int64('l'), 10)] = "additional-key-right"
+
+    cfg.Shortcuts[strconv.FormatInt(int64('g'), 10)] = "additional-key-home"
+    cfg.Shortcuts[strconv.FormatInt(int64('G'), 10)] = "additional-key-end"
+
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyF8), 10)] = "play"
+  }
+  return cfg.Persist()
 }
 
 func (cfg *Config) Persist() (error) {

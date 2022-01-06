@@ -3,6 +3,7 @@ package tui
 import (
 	"embed"
 	"log"
+	"strconv"
 	"time"
 	"unicode"
 
@@ -99,17 +100,35 @@ func Init(embedfs *embed.FS, cfg *config.Config, cch *cache.Cache, logger *zap.L
   return t
 }
 
+func (t *TUI) getInputEvent(event *tcell.EventKey) (string) {
+  var action string
+  var exist bool
+
+  if event.Key() == tcell.KeyRune {
+    action, exist = t.Config.Shortcuts[strconv.FormatInt(int64(event.Rune()), 10)]
+  } else {
+    action, exist = t.Config.Shortcuts[strconv.FormatInt(int64(event.Key()), 10)]
+  }
+  if exist == false {
+    return ""
+  }
+
+  return action
+}
+
 func (t *TUI) initInput() {
 	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlR:
+    action := t.getInputEvent(event)
+
+		switch action {
+		case "refresh":
       t.RefreshMainscreen()
       t.SetInfo(true)
 			return nil
-		case tcell.KeyCtrlQ:
+		case "quit":
 			t.App.Stop()
       return nil
-    case tcell.KeyF8:
+    case "play":
       t.Player.Play()
       return nil
     default:
