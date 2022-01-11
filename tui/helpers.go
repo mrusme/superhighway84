@@ -93,10 +93,6 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
 
   newArticle.Body = strings.TrimSpace(content[1])
 
-  if valid, err := newArticle.IsValid(); valid == false {
-    return *article, err
-  }
-
   return newArticle, nil
 }
 

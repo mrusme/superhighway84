@@ -420,6 +420,11 @@ func(mainscreen *Mainscreen) submitNewArticle(group string) {
     return
   }
 
+  if valid, err := updatedNewArticle.IsValid(); valid == false {
+    mainscreen.T.ShowErrorModal(err.Error())
+    return
+  }
+
   mainscreen.T.ShowModal(
     "Do you want to submit this new article?",
     map[string]ModalButton{
@@ -459,6 +464,11 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   }
 
   if strings.TrimSpace(updatedNewArticle.Body) == strings.TrimSpace(newArticle.Body) {
+    return
+  }
+
+  if valid, err := updatedNewArticle.IsValid(); valid == false {
+    mainscreen.T.ShowErrorModal(err.Error())
     return
   }
 
