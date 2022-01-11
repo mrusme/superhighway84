@@ -180,13 +180,13 @@ func (mainscreen *Mainscreen) SetInfo(info map[string]string) {
 
 func (mainscreen *Mainscreen) SetVersion(version string, versionLatest string) {
   v := version
-  if version == "v0.0.0" {
+  if version == "0.0.0" {
     v = "DeLorean @ 1.21 Gigawatts"
   }
 
   l := ""
   if versionLatest != version &&
-    version != "v0.0.0" {
+    version != "0.0.0" {
     l = fmt.Sprintf("%s update available!", versionLatest)
   }
 
