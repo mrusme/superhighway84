@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
 	"log"
@@ -72,7 +73,7 @@ func main() {
   var articlesRoots []*models.Article
 
   TUI := tui.Init(&EMBEDFS, cfg, cch, logger)
-  TUI.SetVersion(version, getLatestVersion())
+  TUI.SetVersion(strings.TrimLeft(version, "v"), strings.TrimLeft(getLatestVersion(), "v") )
 
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
