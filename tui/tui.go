@@ -124,6 +124,7 @@ func (t *TUI) initInput() {
 		case "refresh":
       t.RefreshMainscreen()
       t.SetInfo(true)
+      t.App.Sync()
 			return nil
 		case "quit":
 			t.App.Stop()
