@@ -371,6 +371,7 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
     case "group":
       mainscreen.Refresh()
     case "article":
+      mainscreen.markAsRead(index, mainscreen.ArticlesList[index])
       mainscreen.T.OpenArticle(mainscreen.ArticlesList[index], true)
     }
   }
