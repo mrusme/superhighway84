@@ -91,18 +91,20 @@ func (cfg *Config) LoadDefaults() (error) {
     cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlL), 10)] = "focus-articles"
     cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlK), 10)] = "focus-articles"
     cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlJ), 10)] = "focus-preview"
-    cfg.Shortcuts[strconv.FormatInt(int64('n'), 10)] = "article-new"
-    cfg.Shortcuts[strconv.FormatInt(int64('r'), 10)] = "article-reply"
 
-    cfg.Shortcuts[strconv.FormatInt(int64('h'), 10)] = "additional-key-left"
-    cfg.Shortcuts[strconv.FormatInt(int64('j'), 10)] = "additional-key-down"
-    cfg.Shortcuts[strconv.FormatInt(int64('k'), 10)] = "additional-key-up"
-    cfg.Shortcuts[strconv.FormatInt(int64('l'), 10)] = "additional-key-right"
+    cfg.Shortcuts[strconv.FormatInt(int64('n'), 10)]            = "article-new"
+    cfg.Shortcuts[strconv.FormatInt(int64('r'), 10)]            = "article-reply"
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlA), 10)] = "article-mark-all-read"
 
-    cfg.Shortcuts[strconv.FormatInt(int64('g'), 10)] = "additional-key-home"
-    cfg.Shortcuts[strconv.FormatInt(int64('G'), 10)] = "additional-key-end"
+    cfg.Shortcuts[strconv.FormatInt(int64('h'), 10)]            = "additional-key-left"
+    cfg.Shortcuts[strconv.FormatInt(int64('j'), 10)]            = "additional-key-down"
+    cfg.Shortcuts[strconv.FormatInt(int64('k'), 10)]            = "additional-key-up"
+    cfg.Shortcuts[strconv.FormatInt(int64('l'), 10)]            = "additional-key-right"
 
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyF8), 10)] = "play"
+    cfg.Shortcuts[strconv.FormatInt(int64('g'), 10)]            = "additional-key-home"
+    cfg.Shortcuts[strconv.FormatInt(int64('G'), 10)]            = "additional-key-end"
+
+    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyF8), 10)]    = "play"
   }
   return cfg.Persist()
 }

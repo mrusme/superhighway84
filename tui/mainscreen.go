@@ -323,6 +323,9 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
   case "article-reply":
     mainscreen.replyToArticle(mainscreen.ArticlesList[mainscreen.CurrentArticleSelected])
     return nil
+  case "article-mark-all-read":
+    mainscreen.markAllAsRead()
+    return nil
   case "additional-key-down":
     mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyDown, 0, tcell.ModNone))
     return nil
@@ -404,6 +407,12 @@ func(mainscreen *Mainscreen) markAsRead(index int, article *models.Article) {
   )
   mainscreen.Articles.SetItemText(index, updatedMainText, secondaryText)
   mainscreen.T.Cache.StoreArticle(article)
+}
+
+func(mainscreen *Mainscreen) markAllAsRead() {
+  for i := 0; i < len(mainscreen.ArticlesList); i++ {
+    mainscreen.markAsRead(i, mainscreen.ArticlesList[i])
+  }
 }
 
 func(mainscreen *Mainscreen) submitNewArticle(group string) {
