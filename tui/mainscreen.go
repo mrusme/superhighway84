@@ -272,6 +272,8 @@ func(mainscreen *Mainscreen) Refresh() {
   selectedGroup := mainscreen.CurrentGroupSelected
   selectedArticle := mainscreen.CurrentArticleSelected
 
+  previewLine, previewCol := mainscreen.Preview.GetScrollOffset()
+
   previousGroupsList := mainscreen.GroupsList
   mainscreen.GroupsList = []string{}
   // previousGroupsMap := mainscreen.GroupsMap
@@ -302,7 +304,7 @@ func(mainscreen *Mainscreen) Refresh() {
   mainscreen.changeHandler("group")(selectedGroup, "", "", 0)
   mainscreen.changeHandler("article")(selectedArticle, "", "", 0)
 
-  mainscreen.T.App.SetFocus(mainscreen.Articles)
+  mainscreen.Preview.ScrollTo(previewLine, previewCol)
 }
 
 func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {
