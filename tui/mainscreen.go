@@ -432,6 +432,10 @@ func(mainscreen *Mainscreen) submitNewArticle(group string) {
     return
   }
 
+  if strings.TrimSpace(updatedNewArticle.Body) == strings.TrimSpace(newArticle.Body) {
+    return
+  }
+
   if valid, err := updatedNewArticle.IsValid(); valid == false {
     mainscreen.T.ShowErrorModal(err.Error())
     return
