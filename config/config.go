@@ -74,6 +74,9 @@ func LoadConfig() (*Config, error) {
   cfg := new(Config)
   cfg.Shortcuts = make(map[string]string)
   _, err = toml.Decode(string(configFileContent), &cfg)
+  if err != nil {
+    return nil, errors.New("The config could not be parsed, make sure it is valid TOML and you don't have double assignments.")
+  }
 
   cfg.ConfigFile = configFile
   err = cfg.LoadDefaults()
