@@ -135,7 +135,8 @@ effect on the next launch of Superhighway84.
 
 Configuration options that might be of interest:
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- superhighway84.toml - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 ArticlesListView =
   The view to be used for the articles lit. Possible values:
   0 - threaded view, latest thread at the top
@@ -152,6 +153,18 @@ ArticlesListView =
 [Shortcuts]
   The shortcuts for navigating Superhighway84, can be reset to its defaults by
   simply removing the whole [Shortcuts] block and launching Superhighway84
+
+  The structure is as following:
+
+  `<key code> = "event"`
+
+  The key codes can be looked up under the following link:
+
+  https://pkg.go.dev/github.com/gdamore/tcell/v2#Key
+
+  For simple ASCII characters use their ASCII code, e.g. `114` for the character 
+  `r`.
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -177,16 +190,42 @@ C-l, C-k: Focus articles list
        r: Reply to selected article
 
 However, you are free to customize these within your configuration file, under
-the section `Shortcuts`. The structure is as following:
+the section `Shortcuts`. 
 
-`<key code> = "event"`
 
-The key codes can be looked up under the following link:
+SUBMIT ARTICLE
 
-https://pkg.go.dev/github.com/gdamore/tcell/v2#Key
+When submitting a new article or a reply to an article, the $EDITOR is launched
+in which a document with a specific structure will be visible. This structure
+consists of the HEADER, a SEPARATOR and the BODY and looks like this:
 
-For simple ASCII characters use their ASCII code, e.g. `114` for the character 
-`r`.
+- $EDITOR - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Subject: This is the subject of the article
+Newsgroup: test.sandbox
+= = = = = =
+This is the multiline
+body of the article
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The HEADER contains all headers that are required for an article to be
+submitted. These are:
+
+- Subject: 
+  The subject of the article that will be shown in the articles list. The
+  subject must only contain of printable ASCII characters.
+
+- Newsgroup: 
+  The newsgroup under which the article will be submitted, this can
+  either be an existing group or a new group. Please try to follow
+  the convention when creating new groups.
+  The newsgroup must only contain of printable ASCII characters.
+
+The SEPARATOR contains of 6 equal signs and 5 spaces, alternating each 
+other, followed by a new line.
+
+The BODY can contain of multiline text.
 
 
 
