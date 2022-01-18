@@ -341,9 +341,9 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
     mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyRight, 0, tcell.ModNone))
     return nil
   case "additional-key-home":
-    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
-  case "additional-key-end":
     mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyHome, 0, tcell.ModNone))
+  case "additional-key-end":
+    mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
   }
 
   return event
