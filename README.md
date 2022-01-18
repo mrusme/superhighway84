@@ -125,6 +125,37 @@ patient.
 
 
 
+CONFIGURATION
+-------------
+
+Superhighway84 will guide you through the basic configuration on its first run.
+The configuration is stored at the path that you specified in the setup wizard.
+After it was successfully created, it can be adjusted manually and will take
+effect on the next launch of Superhighway84.
+
+Configuration options that might be of interest:
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ArticlesListView =
+  The view to be used for the articles lit. Possible values:
+  0 - threaded view, latest thread at the top
+  1 - list view, latest article at the top
+
+[Profile]
+  From =
+    The identifier that is being shown when posting an article, e.g. your name,
+    username or email that you'd like to display
+
+  Organization =
+    An optional organization that you'd like to display affiliation with
+
+[Shortcuts]
+  The shortcuts for navigating Superhighway84, can be reset to its defaults by
+  simply removing the whole [Shortcuts] block and launching Superhighway84
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
 USAGE
 -----
 
@@ -156,6 +187,7 @@ https://pkg.go.dev/github.com/gdamore/tcell/v2#Key
 
 For simple ASCII characters use their ASCII code, e.g. `114` for the character 
 `r`.
+
 
 
 KNOWN LIMITATIONS

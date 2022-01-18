@@ -45,6 +45,8 @@ type Config struct {
   Profile             ConfigProfile
 
   Shortcuts           map[string]string
+
+  ArticlesListView    int8
 }
 
 func LoadConfig() (*Config, error) {
@@ -109,6 +111,7 @@ func (cfg *Config) LoadDefaults() (error) {
 
     cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyF8), 10)]    = "play"
   }
+
   return cfg.Persist()
 }
 

@@ -60,6 +60,8 @@ type Mainscreen struct {
   ArticlesList []*models.Article
 
   MarkTimer *time.Timer
+
+  ArticlesListView int8
 }
 
 func(t *TUI) NewMainscreen() (*Mainscreen) {
@@ -144,6 +146,7 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
 		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false).
 		AddItem(mainscreen.Preview,  2, 1, 1, 2, 0, 0, false)
 
+  mainscreen.ArticlesListView = mainscreen.T.Config.ArticlesListView
   return mainscreen
 }
 
@@ -206,7 +209,7 @@ func (mainscreen *Mainscreen) GetDefaultFocus() (tview.Primitive) {
   return mainscreen.Articles
 }
 
-func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*models.Article, selectedGroup int, previousGroupsList []string) {
+func(mainscreen *Mainscreen) addNodeToArticlesList(view int8, level int, articlesNode *[]*models.Article, selectedGroup int, previousGroupsList []string) {
   // fmt.Fprintf(os.Stderr, "%s Node has %d items\n", strings.Repeat(" ", level * 3), len(*articlesNode))
 
   for i := 0; i < len(*articlesNode); i++ {
@@ -219,7 +222,7 @@ func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*m
         article.Newsgroup == previousGroupsList[selectedGroup]) {
 
       prefix := ""
-      if level > 0 {
+      if view == 0 && level > 0 {
         if i < (len(*articlesNode) - 1) || len(article.Replies) > 0 {
           prefix = "[gray]├[-]"
         } else {
@@ -228,7 +231,7 @@ func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*m
       }
 
       prefixSub := " "
-      if len(article.Replies) > 0 || (level > 0 && i < (len(*articlesNode) - 1)) {
+      if view == 0 && (len(article.Replies) > 0 || (level > 0 && i < (len(*articlesNode) - 1))) {
         prefixSub = "[gray]│[-]"
       }
 
@@ -254,8 +257,8 @@ func(mainscreen *Mainscreen) addNodeToArticlesList(level int, articlesNode *[]*m
         ), 0, nil)
       mainscreen.ArticlesList = append(mainscreen.ArticlesList, article)
 
-      if len(article.Replies) > 0 {
-        mainscreen.addNodeToArticlesList((level + 1), &article.Replies, selectedGroup, previousGroupsList)
+      if view == 0 && len(article.Replies) > 0 {
+        mainscreen.addNodeToArticlesList(view, (level + 1), &article.Replies, selectedGroup, previousGroupsList)
       }
     }
 
@@ -288,7 +291,14 @@ func(mainscreen *Mainscreen) Refresh() {
     Index: 0,
   }
 
-  mainscreen.addNodeToArticlesList(0, mainscreen.T.ArticlesRoots, selectedGroup, previousGroupsList)
+  var articlesSource *[]*models.Article
+  switch(mainscreen.ArticlesListView) {
+  case 0:
+    articlesSource = mainscreen.T.ArticlesRoots
+  case 1:
+    articlesSource = mainscreen.T.ArticlesDatasource
+  }
+  mainscreen.addNodeToArticlesList(mainscreen.ArticlesListView, 0, articlesSource, selectedGroup, previousGroupsList)
 
   sort.Strings(mainscreen.GroupsList)
   for idx, group := range mainscreen.GroupsList {
