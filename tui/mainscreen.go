@@ -393,8 +393,19 @@ func(mainscreen *Mainscreen) selectHandler(item string)(func(int, string, string
 }
 
 func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
-  m := regexp.MustCompile(`(?m)^> (.*)\n`)
-  body := m.ReplaceAllString(article.Body, "[gray]> $1[-]\n")
+  var m *regexp.Regexp
+  body := article.Body
+
+  // Removing GPG/PGP stuff until there is a prober validation for it
+  m = regexp.MustCompile(`(?m)^(> ){0,1}-----BEGIN PGP SIGNED MESSAGE-----\n(> ){0,1}Hash:(.*)(\n( >){0,1}){1,2}`)
+  body = m.ReplaceAllString(body, "")
+
+  m = regexp.MustCompile(`(?sm)^(> ){0,1}-----BEGIN PGP SIGNATURE-----.*-----END PGP SIGNATURE-----$`)
+  body = m.ReplaceAllString(body, "")
+  // End GPG/PGP stuff
+
+  m = regexp.MustCompile(`(?m)^> (.*)\n`)
+  body = m.ReplaceAllString(body, "[gray]> $1[-]\n")
 
   mainscreen.Preview.SetText(fmt.Sprintf(
     "[gray]Date:[-] [darkgray]%s[-]\n[gray]Newsgroup:[-] [darkgray]%s[-]\n\n\n%s",
