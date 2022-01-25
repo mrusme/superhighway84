@@ -132,19 +132,29 @@ func(t *TUI) NewMainscreen() (*Mainscreen) {
   mainscreen.Footer.SetBorder(false).
     SetBorderPadding(0, 0, 1, 1)
 
-	mainscreen.Canvas = tview.NewGrid().
-		SetRows(5, 0, 0, 1).
-		SetColumns(30, 0, 14).
-		SetBorders(false).
-		AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
-    AddItem(mainscreen.Stats,  0, 2, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Info,   3, 0, 1, 1, 0, 0, false).
-		AddItem(mainscreen.Footer, 3, 1, 1, 2, 0, 0, false)
+  topRowGrid := tview.NewGrid().
+    SetColumns(30, 0, 14).
+    AddItem(mainscreen.Header, 0, 0, 1, 2, 0, 0, false).
+    AddItem(mainscreen.Stats,  0, 2, 1, 1, 0, 0, false)
 
-	mainscreen.Canvas.
-    AddItem(mainscreen.Groups,   1, 0, 2, 1, 0, 0, false).
-		AddItem(mainscreen.Articles, 1, 1, 1, 2, 0, 0, false).
-		AddItem(mainscreen.Preview,  2, 1, 1, 2, 0, 0, false)
+  midRowGrid := tview.NewGrid().
+    SetColumns(-1, -5). // Group takes ~1/5 of the horizontal space available
+    SetRows(-2, -3). // Preview is ~1/3 bigger than Articles
+    AddItem(mainscreen.Groups,   0, 0, 2, 1, 0, 0, false).
+    AddItem(mainscreen.Articles, 0, 1, 1, 1, 0, 0, false).
+    AddItem(mainscreen.Preview,  1, 1, 1, 1, 0, 0, false)
+
+  bottomRowGrid := tview.NewGrid().
+    SetColumns(5, 0, 0).
+    AddItem(mainscreen.Info,   0, 0, 1, 1, 0, 0, false).
+    AddItem(mainscreen.Footer, 0, 1, 1, 2, 0, 0, false)
+
+  mainscreen.Canvas = tview.NewGrid().
+    SetRows(5, 0, 1).
+    SetBorders(false).
+    AddItem(topRowGrid,    0, 0, 1, 1, 0, 0, false).
+    AddItem(midRowGrid,    1, 0, 1, 1, 0, 0, false).
+    AddItem(bottomRowGrid, 2, 0, 1, 1, 0, 0, false)
 
   mainscreen.ArticlesListView = mainscreen.T.Config.ArticlesListView
   return mainscreen
