@@ -18,7 +18,9 @@ type Article struct {
   Body         string    `mapstructure:"body" json:"-" validate:"required,min=3,max=524288"`
 
   Replies      []*Article `mapstructure:"-" json:"-" validate:"-"`
-  Read         bool      `mapstructure:"-" json:"read" validate:"-"`
+  LatestReply  int64      `mapstructure:"-" json:"-" validate:"-"`
+
+  Read         bool       `mapstructure:"-" json:"read" validate:"-"`
 }
 
 func NewArticle() (*Article) {

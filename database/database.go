@@ -257,14 +257,31 @@ func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error)
   var articlesRoots []*models.Article
   for i := 0; i < len(articles); i++ {
     if articles[i].InReplyToID != "" {
-      if _, exist := articlesMap[articles[i].InReplyToID]; exist == true {
-        (*articlesMap[articles[i].InReplyToID]).Replies =
-          append((*articlesMap[articles[i].InReplyToID]).Replies, articles[i])
+      inReplyTo := articles[i].InReplyToID
+      if _, exist := articlesMap[inReplyTo]; exist == true {
+
+        (*articlesMap[inReplyTo]).Replies =
+          append((*articlesMap[inReplyTo]).Replies, articles[i])
+        (*articlesMap[inReplyTo]).LatestReply = articles[i].Date
+        continue
       }
-    } else {
-      articlesRoots = append(articlesRoots, articles[i])
     }
+    articlesRoots = append(articlesRoots, articles[i])
   }
+
+  sort.SliceStable(articlesRoots, func(i, j int) bool {
+    iLatest := articlesRoots[i].LatestReply
+    if iLatest <= 0 {
+      iLatest = articlesRoots[i].Date
+    }
+
+    jLatest := articlesRoots[j].LatestReply
+    if jLatest <= 0 {
+      jLatest = articlesRoots[j].Date
+    }
+
+    return iLatest > jLatest
+  })
 
   return articles, articlesRoots, nil
 }
