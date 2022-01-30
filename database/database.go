@@ -14,6 +14,7 @@ import (
 	config "github.com/ipfs/go-ipfs-config"
 	"github.com/ipfs/go-ipfs/core"
 	icore "github.com/ipfs/interface-go-ipfs-core"
+	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
@@ -80,6 +81,19 @@ func (db *Database) init() (error) {
 
   db.StoreEventChan = db.Store.Subscribe(db.ctx)
   return nil
+}
+
+func(db *Database) GetOwnID() string {
+  return db.OrbitDB.Identity().ID
+}
+
+func(db *Database) GetOwnPubKey() crypto.PubKey {
+  pubKey, err := db.OrbitDB.Identity().GetPublicKey()
+  if err != nil {
+    return nil
+  }
+
+  return pubKey
 }
 
 func(db *Database) connectToPeers() error {

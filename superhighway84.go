@@ -93,8 +93,12 @@ func main() {
   }
 
   err = db.Connect(func(address string) {
+    TUI.Meta["myID"] = db.GetOwnID()
+    TUI.Meta["myPubKey"] = db.GetOwnPubKey()
+
     TUI.Views["mainscreen"].(*tui.Mainscreen).SetFooter(address)
     articles, articlesRoots, _ = db.ListArticles()
+
 
     time.Sleep(time.Second * 2)
     TUI.SetView("mainscreen", true)

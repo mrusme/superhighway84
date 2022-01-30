@@ -40,6 +40,8 @@ type TUI struct {
   Version                    string
   VersionLatest              string
 
+  Meta                       map[string]interface{}
+
   // The fun starts here
   Player                     *common.Player
 }
@@ -81,6 +83,8 @@ func Init(embedfs *embed.FS, cfg *config.Config, cch *cache.Cache, logger *zap.L
   t.Logger = logger
 
   t.Stats = make(map[string]int64)
+
+  t.Meta = make(map[string]interface{})
 
   logoBytes, err := embedfs.ReadFile("superhighway84.jpeg")
   if err != nil {
