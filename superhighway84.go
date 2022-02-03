@@ -50,6 +50,7 @@ func main() {
   ctx, cancel := context.WithCancel(context.Background())
   defer cancel()
 
+  log.Println("loading configuration ...")
   cfg, err := config.LoadConfig()
   if err != nil {
     log.Panicln(err)
@@ -58,11 +59,13 @@ func main() {
     cfg.Setup()
   }
 
+  log.Println("initializing logger ...")
   logger, err := NewLogger(cfg.Logfile)
   if err != nil {
     log.Panicln(err)
   }
 
+  log.Println("initializing cache ...")
   cch, err := cache.NewCache(cfg.ProgramCachePath)
   if err != nil {
     log.Panicln(err)
@@ -72,6 +75,7 @@ func main() {
   var articles []*models.Article
   var articlesRoots []*models.Article
 
+  log.Println("initializing TUI and loading database, please wait ...")
   TUI := tui.Init(&EMBEDFS, cfg, cch, logger)
   TUI.SetVersion(strings.TrimLeft(version, "v"), strings.TrimLeft(getLatestVersion(), "v") )
 
