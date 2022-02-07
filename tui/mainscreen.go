@@ -414,7 +414,7 @@ func(mainscreen *Mainscreen) renderPreview(article *models.Article) {
   body = m.ReplaceAllString(body, "")
   // End GPG/PGP stuff
 
-  m = regexp.MustCompile(`(?m)^> (.*)(\n){0,1}`)
+  m = regexp.MustCompile(`(?m)^>(.*)(\n){0,1}`)
   body = m.ReplaceAllString(body, "[gray]> $1[-]\n")
 
   mainscreen.Preview.SetText(fmt.Sprintf(
