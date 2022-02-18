@@ -45,6 +45,7 @@ type Config struct {
   Profile             ConfigProfile
 
   Shortcuts           map[string]string
+  ShortcutsReference  string
 
   ArticlesListView    int8
 }
@@ -89,27 +90,49 @@ func LoadConfig() (*Config, error) {
 }
 
 func (cfg *Config) LoadDefaults() (error) {
+
+  shortcutDefaults := []struct{
+    key           tcell.Key
+    command       string
+    keyAltText    string
+  } {
+    {tcell.KeyCtrlQ, "quit", "C-q"},
+    {tcell.KeyCtrlR, "refresh", "C-r"},
+    {tcell.KeyCtrlH, "focus-groups", "C-h"},
+    {tcell.KeyCtrlL, "focus-articles", "C-l"},
+    {tcell.KeyCtrlK, "focus-articles", "C-k"},
+    {tcell.KeyCtrlJ, "focus-preview", "C-j"},
+    {tcell.KeyCtrlA, "article-mark-all-read", "C-a"},
+
+    {tcell.Key('n'), "article-new", ""},
+    {tcell.Key('r'), "article-reply", ""},
+
+    {tcell.Key('h'), "additional-key-left", ""},
+    {tcell.Key('j'), "additional-key-down", ""},
+    {tcell.Key('k'), "additional-key-up", ""},
+    {tcell.Key('l'), "additional-key-right", ""},
+
+    {tcell.Key('g'), "additional-key-home", ""},
+    {tcell.Key('G'), "additional-key-end", ""},
+
+    {tcell.KeyF8, "play", "F8"},
+    {tcell.Key('?'), "help", ""},
+  }
+
+  var sb strings.Builder
+  for _, shortcut := range shortcutDefaults {
+    keyText := string(shortcut.key)
+    if shortcut.keyAltText != "" {
+      keyText = shortcut.keyAltText
+    }
+    sb.WriteString(fmt.Sprintf("%s - %s\n", keyText, shortcut.command))
+  }
+  cfg.ShortcutsReference = sb.String()
+
   if len(cfg.Shortcuts) == 0 {
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlQ), 10)] = "quit"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlR), 10)] = "refresh"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlH), 10)] = "focus-groups"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlL), 10)] = "focus-articles"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlK), 10)] = "focus-articles"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlJ), 10)] = "focus-preview"
-
-    cfg.Shortcuts[strconv.FormatInt(int64('n'), 10)]            = "article-new"
-    cfg.Shortcuts[strconv.FormatInt(int64('r'), 10)]            = "article-reply"
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyCtrlA), 10)] = "article-mark-all-read"
-
-    cfg.Shortcuts[strconv.FormatInt(int64('h'), 10)]            = "additional-key-left"
-    cfg.Shortcuts[strconv.FormatInt(int64('j'), 10)]            = "additional-key-down"
-    cfg.Shortcuts[strconv.FormatInt(int64('k'), 10)]            = "additional-key-up"
-    cfg.Shortcuts[strconv.FormatInt(int64('l'), 10)]            = "additional-key-right"
-
-    cfg.Shortcuts[strconv.FormatInt(int64('g'), 10)]            = "additional-key-home"
-    cfg.Shortcuts[strconv.FormatInt(int64('G'), 10)]            = "additional-key-end"
-
-    cfg.Shortcuts[strconv.FormatInt(int64(tcell.KeyF8), 10)]    = "play"
+    for _, shortcut := range shortcutDefaults {
+      cfg.Shortcuts[strconv.FormatInt(int64(shortcut.key), 10)] = shortcut.command
+    }
   }
 
   return cfg.Persist()
