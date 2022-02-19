@@ -34,6 +34,15 @@ const (
   COLOR_SUBJECT_READ   = "white"
 )
 
+var HELP_TEMPLATE =
+`
+HELP!
+
+Default shortcuts:
+
+%s
+`
+
 type GroupMapEntry struct {
   Index   int
 }
@@ -364,6 +373,8 @@ func (mainscreen *Mainscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKe
     mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyHome, 0, tcell.ModNone))
   case "additional-key-end":
     mainscreen.T.App.QueueEvent(tcell.NewEventKey(tcell.KeyEnd, 0, tcell.ModNone))
+  case "help":
+    mainscreen.showHelp()
   }
 
   return event
@@ -548,3 +559,9 @@ func(mainscreen *Mainscreen) replyToArticle(article *models.Article) {
   return
 }
 
+func(mainscreen *Mainscreen) showHelp() {
+  helpMessage := fmt.Sprintf(HELP_TEMPLATE, mainscreen.T.Config.ShortcutsReference)
+  mainscreen.T.ShowHelpModal(helpMessage)
+
+  return
+}

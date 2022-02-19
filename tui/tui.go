@@ -251,6 +251,19 @@ func(t *TUI) ShowErrorModal(text string) {
     })
 }
 
+func(t *TUI) ShowHelpModal(text string) {
+  t.ShowModal(
+    text,
+    map[string]ModalButton{
+      "Press any key to close": {
+        Rune: '*',
+        Callback: func() {
+          return
+        },
+      },
+    })
+}
+
 func (t *TUI) SetInfo(refresh bool) {
   if refresh == true {
     t.Views["mainscreen"].(*Mainscreen).SetInfo(map[string]string{
