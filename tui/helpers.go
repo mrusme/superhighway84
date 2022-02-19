@@ -30,8 +30,8 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
   defer os.Remove(tmpFile.Name())
 
   tmpContent := []byte(fmt.Sprintf(
-    "Subject: %s\nNewsgroup: %s\n= = = = = =\n%s",
-    article.Subject, article.Newsgroup, article.Body))
+    "Subject: %s\nNewsgroup: %s\nFrom: %s\n= = = = = =\n%s",
+    article.Subject, article.Newsgroup, article.From, article.Body))
   if _, err = tmpFile.Write(tmpContent); err != nil {
     return *article, err
   }
