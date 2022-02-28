@@ -1,10 +1,10 @@
 package models
 
 import (
-	"time"
+  "time"
 
-	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
+  "github.com/go-playground/validator/v10"
+  "github.com/google/uuid"
 )
 
 type Article struct {

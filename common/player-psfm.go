@@ -3,7 +3,7 @@
 package common
 
 import(
-	"github.com/mrusme/go-poolsuite"
+  "github.com/mrusme/go-poolsuite"
 )
 
 type Player struct {

@@ -1,22 +1,22 @@
 package cache
 
 import (
-	"encoding/json"
+  "encoding/json"
 
-	"github.com/mrusme/superhighway84/models"
-	"github.com/tidwall/buntdb"
+  "github.com/mrusme/superhighway84/models"
+  "github.com/tidwall/buntdb"
 )
 
 type Cache struct {
   db               *buntdb.DB
-	dbPath           string
+  dbPath           string
 }
 
 func NewCache(dbPath string) (*Cache, error) {
   var err error
 
   cache := new(Cache)
-	cache.dbPath = dbPath
+  cache.dbPath = dbPath
   cache.db, err = buntdb.Open(cache.dbPath)
   if err != nil {
     return nil, err

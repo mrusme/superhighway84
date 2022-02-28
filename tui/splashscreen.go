@@ -1,13 +1,13 @@
 package tui
 
 import (
-	"bytes"
-	"fmt"
-	"image/color"
+  "bytes"
+  "fmt"
+  "image/color"
 
-	"github.com/eliukblau/pixterm/pkg/ansimage"
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
+  "github.com/eliukblau/pixterm/pkg/ansimage"
+  "github.com/gdamore/tcell/v2"
+  "github.com/rivo/tview"
 )
 
 
@@ -22,9 +22,9 @@ func(t *TUI) NewSplashscreen(logo *[]byte) (*Splashscreen) {
   splashscreen.T = t
 
   canvas := tview.NewTextView().
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWrap(true)
+    SetDynamicColors(true).
+    SetRegions(true).
+    SetWrap(true)
   canvas.SetBorder(false)
   canvas.Clear()
 
@@ -54,7 +54,7 @@ func(splashscreen *Splashscreen) Refresh() {
     return
   }
   // splashscreen.Canvas.Clear()
-	fmt.Fprint(splashscreen.Canvas, tview.TranslateANSI(logoImage.RenderExt(false, false)))
+  fmt.Fprint(splashscreen.Canvas, tview.TranslateANSI(logoImage.RenderExt(false, false)))
 }
 
 func (splashscreen *Splashscreen) HandleInput(event *tcell.EventKey) (*tcell.EventKey) {

@@ -1,16 +1,16 @@
 package tui
 
 import (
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-	"os/exec"
-	"strings"
-	"time"
+  "errors"
+  "fmt"
+  "io/ioutil"
+  "log"
+  "os"
+  "os/exec"
+  "strings"
+  "time"
 
-	"github.com/mrusme/superhighway84/models"
+  "github.com/mrusme/superhighway84/models"
 )
 
 func MillisecondsToDate(ms int64) (string) {

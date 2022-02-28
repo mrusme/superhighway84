@@ -1,24 +1,24 @@
 package main
 
 import (
-	"context"
-	"embed"
-	"encoding/json"
-	"net/http"
-	"net/url"
-	"os"
-	"runtime"
-	"strings"
-	"time"
+  "context"
+  "embed"
+  "encoding/json"
+  "net/http"
+  "net/url"
+  "os"
+  "runtime"
+  "strings"
+  "time"
 
-	"log"
+  "log"
 
-	"github.com/mrusme/superhighway84/cache"
-	"github.com/mrusme/superhighway84/config"
-	"github.com/mrusme/superhighway84/database"
-	"github.com/mrusme/superhighway84/models"
-	"github.com/mrusme/superhighway84/tui"
-	"go.uber.org/zap"
+  "github.com/mrusme/superhighway84/cache"
+  "github.com/mrusme/superhighway84/config"
+  "github.com/mrusme/superhighway84/database"
+  "github.com/mrusme/superhighway84/models"
+  "github.com/mrusme/superhighway84/tui"
+  "go.uber.org/zap"
 )
 
 //go:embed superhighway84.jpeg

@@ -1,17 +1,17 @@
 package config
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
+  "bytes"
+  "errors"
+  "fmt"
+  "io/ioutil"
+  "os"
+  "path/filepath"
+  "strconv"
+  "strings"
 
-	"github.com/BurntSushi/toml"
-	"github.com/gdamore/tcell/v2"
+  "github.com/BurntSushi/toml"
+  "github.com/gdamore/tcell/v2"
 )
 
 type ConfigProfile struct {
@@ -37,7 +37,7 @@ type Config struct {
   ConnectionString    string
 
   CachePath           string // Deprecated, should be removed soon
-	DatabaseCachePath   string
+  DatabaseCachePath   string
   ProgramCachePath    string
 
   Logfile             string
@@ -153,10 +153,10 @@ func (cfg *Config) Persist() (error) {
 
 func (cfg *Config) WasSetup() (bool) {
   if cfg.DatabaseCachePath == "" ||
-		 cfg.ProgramCachePath == "" ||
+     cfg.ProgramCachePath == "" ||
      cfg.ConnectionString == "" ||
      cfg.Logfile == "" ||
-		 cfg.Profile.From == "" {
+     cfg.Profile.From == "" {
     return false
   }
 
@@ -167,9 +167,9 @@ func (cfg *Config) Setup() (error) {
   fmt.Printf("\nSUPERHIGHWAY84\n\nInitial Setup\n-------------\n\n")
 
   defaultConnectionString := "/orbitdb/bafyreifdpagppa7ve45odxuvudz5snbzcybwyfer777huckl4li4zbc5k4/superhighway84"
-	if cfg.ConnectionString != "" {
-		defaultConnectionString = cfg.ConnectionString
-	}
+  if cfg.ConnectionString != "" {
+    defaultConnectionString = cfg.ConnectionString
+  }
   fmt.Printf("Database connection string [%s]: ", defaultConnectionString)
   fmt.Scanln(&cfg.ConnectionString)
   if strings.TrimSpace(cfg.ConnectionString) == "" {
@@ -182,10 +182,10 @@ func (cfg *Config) Setup() (error) {
   }
 
   defaultDatabaseCachePath := filepath.Join(cacheDir, "superhighway84", "database")
-	// Migration step from old CachePath to new DatabaseCachePath
-	if cfg.CachePath != "" {
-		defaultDatabaseCachePath = cfg.CachePath
-	}
+  // Migration step from old CachePath to new DatabaseCachePath
+  if cfg.CachePath != "" {
+    defaultDatabaseCachePath = cfg.CachePath
+  }
   fmt.Printf("Database cache path [%s]: ", defaultDatabaseCachePath)
   fmt.Scanln(&cfg.DatabaseCachePath)
   if strings.TrimSpace(cfg.DatabaseCachePath) == "" {
@@ -194,12 +194,12 @@ func (cfg *Config) Setup() (error) {
   os.MkdirAll(filepath.Dir(cfg.DatabaseCachePath), 0755)
 
   defaultProgramCachePath := filepath.Join(cacheDir, "superhighway84", "program")
-	// Migration step from old CachePath to new DatabaseCachePath
-	if cfg.CachePath != "" {
-		// If the previous CachePath was used, the folder already contains the
-		// OrbitDB, hence we need to find a different place
-		defaultProgramCachePath = filepath.Join(cacheDir, "superhighway84.program")
-	}
+  // Migration step from old CachePath to new DatabaseCachePath
+  if cfg.CachePath != "" {
+    // If the previous CachePath was used, the folder already contains the
+    // OrbitDB, hence we need to find a different place
+    defaultProgramCachePath = filepath.Join(cacheDir, "superhighway84.program")
+  }
   fmt.Printf("Program cache path [%s]: ", defaultProgramCachePath)
   fmt.Scanln(&cfg.ProgramCachePath)
   if strings.TrimSpace(cfg.ProgramCachePath) == "" {
@@ -208,9 +208,9 @@ func (cfg *Config) Setup() (error) {
   os.MkdirAll(filepath.Dir(cfg.ProgramCachePath), 0755)
 
   defaultLogfile := filepath.Join(cacheDir, "superhighway84.log")
-	if cfg.Logfile != "" {
-		defaultLogfile = cfg.Logfile
-	}
+  if cfg.Logfile != "" {
+    defaultLogfile = cfg.Logfile
+  }
   fmt.Printf("Logfile path [%s]: ", defaultLogfile)
   fmt.Scanln(&cfg.Logfile)
   if strings.TrimSpace(cfg.Logfile) == "" {
@@ -221,19 +221,19 @@ func (cfg *Config) Setup() (error) {
   fmt.Printf("\nProfile information\n-------------------\n\n")
 
   defaultProfileFrom := fmt.Sprintf("%s@localhost", os.Getenv("USER"))
-	if cfg.Profile.From != "" {
-		defaultProfileFrom = cfg.Profile.From
-	}
+  if cfg.Profile.From != "" {
+    defaultProfileFrom = cfg.Profile.From
+  }
   fmt.Printf("From [%s]: ", defaultProfileFrom)
   fmt.Scanln(&cfg.Profile.From)
   if strings.TrimSpace(cfg.Profile.From) == "" {
     cfg.Profile.From = defaultProfileFrom
   }
 
-	defaultProfileOrganization := ""
-	if cfg.Profile.Organization != "" {
-		defaultProfileOrganization = cfg.Profile.Organization
-	}
+  defaultProfileOrganization := ""
+  if cfg.Profile.Organization != "" {
+    defaultProfileOrganization = cfg.Profile.Organization
+  }
   fmt.Printf("Organization [%s]: ", defaultProfileOrganization)
   fmt.Scanln(&cfg.Profile.Organization)
 

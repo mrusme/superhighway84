@@ -1,26 +1,26 @@
 package database
 
 import (
-	"context"
-	"sort"
-	"sync"
+  "context"
+  "sort"
+  "sync"
 
-	orbitdb "berty.tech/go-orbit-db"
-	"berty.tech/go-orbit-db/accesscontroller"
-	"berty.tech/go-orbit-db/events"
-	"berty.tech/go-orbit-db/iface"
-	"berty.tech/go-orbit-db/stores"
-	"berty.tech/go-orbit-db/stores/documentstore"
-	config "github.com/ipfs/go-ipfs-config"
-	"github.com/ipfs/go-ipfs/core"
-	icore "github.com/ipfs/interface-go-ipfs-core"
-	"github.com/libp2p/go-libp2p-core/crypto"
-	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/mitchellh/mapstructure"
-	"go.uber.org/zap"
+  orbitdb "berty.tech/go-orbit-db"
+  "berty.tech/go-orbit-db/accesscontroller"
+  "berty.tech/go-orbit-db/events"
+  "berty.tech/go-orbit-db/iface"
+  "berty.tech/go-orbit-db/stores"
+  "berty.tech/go-orbit-db/stores/documentstore"
+  config "github.com/ipfs/go-ipfs-config"
+  "github.com/ipfs/go-ipfs/core"
+  icore "github.com/ipfs/interface-go-ipfs-core"
+  "github.com/libp2p/go-libp2p-core/crypto"
+  "github.com/libp2p/go-libp2p-core/peer"
+  "github.com/mitchellh/mapstructure"
+  "go.uber.org/zap"
 
-	"github.com/mrusme/superhighway84/cache"
-	"github.com/mrusme/superhighway84/models"
+  "github.com/mrusme/superhighway84/cache"
+  "github.com/mrusme/superhighway84/models"
 )
 
 type Database struct {
@@ -97,27 +97,27 @@ func(db *Database) GetOwnPubKey() crypto.PubKey {
 }
 
 func(db *Database) connectToPeers() error {
-	var wg sync.WaitGroup
+  var wg sync.WaitGroup
 
   peerInfos, err := config.DefaultBootstrapPeers()
   if err != nil {
     return err
   }
 
-	wg.Add(len(peerInfos))
-	for _, peerInfo := range peerInfos {
-		go func(peerInfo *peer.AddrInfo) {
-			defer wg.Done()
-			err := db.IPFSCoreAPI.Swarm().Connect(db.ctx, *peerInfo)
-			if err != nil {
+  wg.Add(len(peerInfos))
+  for _, peerInfo := range peerInfos {
+    go func(peerInfo *peer.AddrInfo) {
+      defer wg.Done()
+      err := db.IPFSCoreAPI.Swarm().Connect(db.ctx, *peerInfo)
+      if err != nil {
         db.Logger.Debug("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
-			} else {
+      } else {
         db.Logger.Debug("connected!", zap.String("peerID", peerInfo.ID.String()))
       }
-		}(&peerInfo)
-	}
-	wg.Wait()
-	return nil
+    }(&peerInfo)
+  }
+  wg.Wait()
+  return nil
 }
 
 func NewDatabase(
@@ -142,8 +142,8 @@ func NewDatabase(
   }
 
   if err := setupPlugins(defaultPath); err != nil {
-		return nil, err
-	}
+    return nil, err
+  }
 
   db.IPFSNode, db.IPFSCoreAPI, err = createNode(ctx, defaultPath)
   if err != nil {
@@ -168,14 +168,14 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   //   }
   // }
 
-	// go func() {
-		err = db.connectToPeers()
-		if err != nil {
+  // go func() {
+    err = db.connectToPeers()
+    if err != nil {
       db.Logger.Debug("failed to connect: %s", zap.Error(err))
     } else {
       db.Logger.Debug("connected to peer!")
     }
-	// }()
+  // }()
 
   // log.Println(db.Store.ReplicationStatus().GetBuffered())
   // log.Println(db.Store.ReplicationStatus().GetQueued())

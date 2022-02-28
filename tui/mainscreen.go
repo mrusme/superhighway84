@@ -1,15 +1,15 @@
 package tui
 
 import (
-	"fmt"
-	"regexp"
-	"sort"
-	"strings"
-	"time"
+  "fmt"
+  "regexp"
+  "sort"
+  "strings"
+  "time"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/mrusme/superhighway84/models"
-	"github.com/rivo/tview"
+  "github.com/gdamore/tcell/v2"
+  "github.com/mrusme/superhighway84/models"
+  "github.com/rivo/tview"
 )
 
 var HEADER_LOGO =

@@ -1,19 +1,19 @@
 package tui
 
 import (
-	"embed"
-	"log"
-	"strconv"
-	"time"
-	"unicode"
+  "embed"
+  "log"
+  "strconv"
+  "time"
+  "unicode"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/mrusme/superhighway84/cache"
-	"github.com/mrusme/superhighway84/common"
-	"github.com/mrusme/superhighway84/config"
-	"github.com/mrusme/superhighway84/models"
-	"github.com/rivo/tview"
-	"go.uber.org/zap"
+  "github.com/gdamore/tcell/v2"
+  "github.com/mrusme/superhighway84/cache"
+  "github.com/mrusme/superhighway84/common"
+  "github.com/mrusme/superhighway84/config"
+  "github.com/mrusme/superhighway84/models"
+  "github.com/rivo/tview"
+  "go.uber.org/zap"
 )
 
 type TUI struct {
@@ -121,17 +121,17 @@ func (t *TUI) getInputEvent(event *tcell.EventKey) (string) {
 }
 
 func (t *TUI) initInput() {
-	t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+  t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
     action := t.getInputEvent(event)
 
-		switch action {
-		case "refresh":
+    switch action {
+    case "refresh":
       t.RefreshMainscreen()
       t.SetInfo(true)
       t.App.Sync()
-			return nil
-		case "quit":
-			t.App.Stop()
+      return nil
+    case "quit":
+      t.App.Stop()
       return nil
     case "play":
       t.Player.Play()
@@ -151,8 +151,8 @@ func (t *TUI) initInput() {
       } else {
         return t.Views[t.ActiveView].HandleInput(event)
       }
-		}
-	})
+    }
+  })
 }
 
 func (t *TUI) Launch() {
