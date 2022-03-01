@@ -9,7 +9,7 @@ builds:
       - netbsd
       - openbsd
       - freebsd
-      - plan9
+      # - plan9
       - windows
     goarch:
       - 386
