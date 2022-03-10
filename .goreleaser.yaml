@@ -10,6 +10,7 @@ builds:
       - openbsd
       - freebsd
       # - plan9
+      - android
       - windows
     goarch:
       - 386
