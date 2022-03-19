@@ -2,7 +2,6 @@ package main
 
 import (
   "context"
-  "fmt"
   "net/http"
   "net/url"
   "os"
@@ -15,6 +14,7 @@ import (
   "github.com/mrusme/superhighway84/config"
   "github.com/mrusme/superhighway84/database"
   "github.com/mrusme/superhighway84/models"
+  "github.com/mrusme/superhighway84/rss"
   "go.uber.org/zap"
 )
 
@@ -39,15 +39,6 @@ func NewLogger(filename string) (*zap.Logger, error) {
     }
   }
   return cfg.Build()
-}
-
-// Apparently there's no `min` for ints in golang
-// https://stackoverflow.com/questions/27516387/what-is-the-correct-way-to-find-the-min-between-two-integers-in-go
-func minInt(x, y int) int {
-    if x < y {
-        return x
-    }
-    return y
 }
 
 func main() {
@@ -118,18 +109,14 @@ func main() {
 
   createResponse := func(w http.ResponseWriter, articles []*models.Article) {
 
-    fmt.Fprintf(w, "<RSS HEADER>\n")
+    feedOptions := rss.NewFeedOptions()
+    rssFeed := rss.NewFeed(articles, feedOptions)
+    err := rssFeed.Write(w)
 
-    numArticles := minInt(len(articles), 10)
-
-    if numArticles > 0 {
-      for i, article := range articles[0:numArticles] {
-        fmt.Fprintf(w, "[%d] %s\n", i, article.Subject)
-        fmt.Fprintf(w, "   from:%s in:%s\n", article.From, article.Newsgroup)
-      }
+    if err != nil {
+      log.Printf("Failed to write feed in response: %v", err)
     }
 
-    fmt.Fprintf(w, "<RSS FOOTER>\n")
   }
 
   articlesHandler := func(w http.ResponseWriter, r *http.Request) {
