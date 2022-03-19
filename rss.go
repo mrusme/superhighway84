@@ -1,21 +1,21 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"net/http"
-	"net/url"
-	"os"
-	"runtime"
-	"time"
+  "context"
+  "fmt"
+  "net/http"
+  "net/url"
+  "os"
+  "runtime"
+  "time"
 
-	"log"
+  "log"
 
-	"github.com/mrusme/superhighway84/cache"
-	"github.com/mrusme/superhighway84/config"
-	"github.com/mrusme/superhighway84/database"
-	"github.com/mrusme/superhighway84/models"
-	"go.uber.org/zap"
+  "github.com/mrusme/superhighway84/cache"
+  "github.com/mrusme/superhighway84/config"
+  "github.com/mrusme/superhighway84/database"
+  "github.com/mrusme/superhighway84/models"
+  "go.uber.org/zap"
 )
 
 const LISTEN_ADDR_AND_PORT = ":8080"
@@ -79,72 +79,72 @@ func main() {
   var articles []*models.Article
   var articlesRoots []*models.Article
 
-	log.Println(articles)
-	log.Println(articlesRoots)
+  log.Println(articles)
+  log.Println(articlesRoots)
 
-	log.Println("Creating DB")
+  log.Println("Creating DB")
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.DatabaseCachePath, cch, logger)
   if err != nil {
     log.Panicln(err)
   }
   defer db.Disconnect()
 
-	log.Println("Connecting")
+  log.Println("Connecting")
   err = db.Connect(func(address string) {
     articles, articlesRoots, _ = db.ListArticles()
-		log.Printf("Pre-loaded %d articles, %d roots", len(articles), len(articlesRoots))
+    log.Printf("Pre-loaded %d articles, %d roots", len(articles), len(articlesRoots))
   })
   if err != nil {
     log.Panicln(err)
   }
 
-	log.Println("Connected")
+  log.Println("Connected")
 
-	// ☠️  This is Proof of concept code.
-	// It's ugly, it's buggy and it's very much not thread-safe!
+  // ☠️  This is Proof of concept code.
+  // It's ugly, it's buggy and it's very much not thread-safe!
 
-	go func () {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-time.After(30 * time.Second):
-				log.Println("Refreshing...")
-				articles, articlesRoots, _ = db.ListArticles()
-				log.Printf("Loaded %d articles, %d roots", len(articles), len(articlesRoots))
-			}
-		}
-	}()
+  go func () {
+    for {
+      select {
+      case <-ctx.Done():
+        return
+      case <-time.After(30 * time.Second):
+        log.Println("Refreshing...")
+        articles, articlesRoots, _ = db.ListArticles()
+        log.Printf("Loaded %d articles, %d roots", len(articles), len(articlesRoots))
+      }
+    }
+  }()
 
-	createResponse := func(w http.ResponseWriter, articles []*models.Article) {
+  createResponse := func(w http.ResponseWriter, articles []*models.Article) {
 
-		fmt.Fprintf(w, "<RSS HEADER>\n")
+    fmt.Fprintf(w, "<RSS HEADER>\n")
 
-		numArticles := minInt(len(articles), 10)
+    numArticles := minInt(len(articles), 10)
 
-		if numArticles > 0 {
-			for i, article := range articles[0:numArticles] {
-				fmt.Fprintf(w, "[%d] %s\n", i, article.Subject)
-				fmt.Fprintf(w, "   from:%s in:%s\n", article.From, article.Newsgroup)
-			}
-		}
+    if numArticles > 0 {
+      for i, article := range articles[0:numArticles] {
+        fmt.Fprintf(w, "[%d] %s\n", i, article.Subject)
+        fmt.Fprintf(w, "   from:%s in:%s\n", article.From, article.Newsgroup)
+      }
+    }
 
-		fmt.Fprintf(w, "<RSS FOOTER>\n")
-	}
+    fmt.Fprintf(w, "<RSS FOOTER>\n")
+  }
 
-	articlesHandler := func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("/%s", r.URL.Path[1:])
-		createResponse(w, articlesRoots)
-	}
+  articlesHandler := func(w http.ResponseWriter, r *http.Request) {
+    log.Printf("/%s", r.URL.Path[1:])
+    createResponse(w, articlesRoots)
+  }
 
-	commentsHandler := func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("/%s", r.URL.Path[1:])
-		createResponse(w, articles)
-	}
+  commentsHandler := func(w http.ResponseWriter, r *http.Request) {
+    log.Printf("/%s", r.URL.Path[1:])
+    createResponse(w, articles)
+  }
 
-	http.HandleFunc("/rss/articles", articlesHandler)
-	http.HandleFunc("/rss/comments", commentsHandler)
+  http.HandleFunc("/rss/articles", articlesHandler)
+  http.HandleFunc("/rss/comments", commentsHandler)
 
-	log.Printf("Listening on %s", LISTEN_ADDR_AND_PORT)
-	log.Fatal(http.ListenAndServe(LISTEN_ADDR_AND_PORT, nil))
+  log.Printf("Listening on %s", LISTEN_ADDR_AND_PORT)
+  log.Fatal(http.ListenAndServe(LISTEN_ADDR_AND_PORT, nil))
 }
