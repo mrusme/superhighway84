@@ -32,7 +32,7 @@ func NewLogger(filename string) (*zap.Logger, error) {
     })
   }
 
-  cfg := zap.NewProductionConfig()
+  cfg := zap.NewDevelopmentConfig()
   if runtime.GOOS == "windows" {
     cfg.OutputPaths = []string{
       "stdout",
@@ -90,10 +90,13 @@ func main() {
 
   TUI.CallbackRefreshArticles = func() (error) {
     articles, articlesRoots, err = db.ListArticles()
+    logger.Error("%s", zap.Error(err))
     return err
   }
   TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
-    return db.SubmitArticle(article)
+    err := db.SubmitArticle(article)
+    logger.Error("%s", zap.Error(err))
+    return err
   }
 
   err = db.Connect(func(address string) {
@@ -123,6 +126,8 @@ func main() {
       connections, err := db.IPFSCoreAPI.Swarm().Peers(context.Background())
       if err == nil {
         peers = len(connections)
+      } else {
+        logger.Error("%s", zap.Error(err))
       }
       TUI.SetStats(int64(peers), int64(bw.RateIn), int64(bw.RateOut), bw.TotalIn , bw.TotalOut)
       time.Sleep(time.Second * 5)

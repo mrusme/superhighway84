@@ -110,7 +110,7 @@ func(db *Database) connectToPeers() error {
       defer wg.Done()
       err := db.IPFSCoreAPI.Swarm().Connect(db.ctx, *peerInfo)
       if err != nil {
-        db.Logger.Debug("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
+        db.Logger.Error("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
       } else {
         db.Logger.Debug("connected!", zap.String("peerID", peerInfo.ID.String()))
       }
@@ -159,6 +159,7 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   // if db.Init {
     err = db.init()
     if err != nil {
+      db.Logger.Error("%s", zap.Error(err))
       return err
     }
   // } else {
@@ -171,7 +172,7 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   // go func() {
     err = db.connectToPeers()
     if err != nil {
-      db.Logger.Debug("failed to connect: %s", zap.Error(err))
+      db.Logger.Error("failed to connect: %s", zap.Error(err))
     } else {
       db.Logger.Debug("connected to peer!")
     }
@@ -198,10 +199,12 @@ func (db *Database) Connect(onReady func(address string)) (error) {
 
   err = db.Store.Load(db.ctx, -1)
   if err != nil {
+    db.Logger.Error("%s", zap.Error(err))
     // TODO: clean up
     return err
   }
 
+  db.Logger.Debug("connect done")
   return nil
 }
 
