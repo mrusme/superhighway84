@@ -236,8 +236,20 @@ KNOWN LIMITATIONS
   can alter its data. Since its using a standard _docstore_, PUT and DELETE
   events can alter existing data. This issue will be solved in the future by
   customizing the store to ignore these types of events.
-
-- Probably plenty more that have yet to been found...
+- Superhighway84 is always behind recent IPFS and also OrbitDB versions, mainly
+  because the Berty, the go-orbit-db maintainers, aren't exactly super helpful 
+  and welcoming in regard of the usage of their library. Not only do they
+  simply not document a thing, they also don't seem to care about supporting
+  recent IPFS versions either. Superhighway84 is bound to the version of IPFS 
+  that Berty decides to support for go-orbit-db. go-orbit-db updates, on the 
+  other hand, seem to introduce breaking changes from time to time, which are 
+  hard to debug as someone without in-depth knowledge nor documentation, and 
+  get basically no support from the Berty developers whatsoever.
+  Since Superhighway84 is pretty much a one-man-show it would be quite
+  challenging to fork go-orbit-db in order to keep it up to date with IPFS and
+  make its interface more stable. Unfortunately there doesn't seem to be an
+  alternative to Berty's go-orbit-db as of right now, so Superhighway84 is
+  basically stuck with it.
 
 
 
