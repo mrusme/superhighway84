@@ -2,12 +2,12 @@
 
 ```
 ===============================================================================
-                       INTERACTIVE ASYNC / FULL DUPLEX
+                        INTERACTIVE ASYNC / FULL DUPLEX
 ===============================================================================
 
-                            Dial Up To 19.2 Kbps
+                              Dial Up To 19.2 Kbps
                                   
-                                   with
+                                      with
 
     _  _ _ __ ____                  __   _      __                   ___  ____
    /  / / // / __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /
@@ -15,13 +15,13 @@
  /  / / // /___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/
                    /_/                  /___/                /___/
 
+ ::: UNCENSORABLE USENET-INSPIRED DECENTRALIZED INTERNET DISCUSSION SYSTEM :::
 
-       ::: USENET-INSPIRED DECENTRALIZED INTERNET DISCUSSION SYSTEM :::
 
-
-  The V.H.S. (Very High Speed) Superhighway84 platform is more than just the
-fastest decentralized, USENET-inspired communications platform available. It is
- also the first one to be based on the latest IPFS technology available today!
+   The V.H.S. (Very High Speed) Superhighway84 platform is more than just the
+  fastest decentralized, uncensorable, USENET-inspired communications platform 
+         available. It is also the first one to be based on the latest 
+                        IPFS technology available today!
 
     Superhighway84 offers the most spectacular features under the Spectrum.
                                        
@@ -31,11 +31,12 @@ fastest decentralized, USENET-inspired communications platform available. It is
                          Long Haul Satellite Operation
                               Network Diagnostics
                                  Fallback Mode
-                                    And More!
+                                   And More!
 
 
-      The Superhighway84 modern decentralized internet discussion system.
-                         It should cost a lot more than $0.
+                    The Superhighway84 modern, uncensorable, 
+                   decentralized internet discussion system.
+                       It should cost a lot more than $0.
 
 
 ```
