@@ -7,7 +7,6 @@ import (
 
   orbitdb "berty.tech/go-orbit-db"
   "berty.tech/go-orbit-db/accesscontroller"
-  "berty.tech/go-orbit-db/events"
   "berty.tech/go-orbit-db/iface"
   "berty.tech/go-orbit-db/stores"
   "berty.tech/go-orbit-db/stores/documentstore"
@@ -16,6 +15,7 @@ import (
   icore "github.com/ipfs/interface-go-ipfs-core"
   "github.com/libp2p/go-libp2p-core/crypto"
   "github.com/libp2p/go-libp2p-core/peer"
+  "github.com/libp2p/go-libp2p-core/event"
   "github.com/mitchellh/mapstructure"
   "go.uber.org/zap"
 
@@ -37,7 +37,7 @@ type Database struct {
 
   OrbitDB             orbitdb.OrbitDB
   Store               orbitdb.DocumentStore
-  StoreEventChan      <-chan events.Event
+  Events              event.Subscription
 }
 
 func (db *Database) init() (error) {
@@ -79,7 +79,7 @@ func (db *Database) init() (error) {
     return err
   }
 
-  db.StoreEventChan = db.Store.Subscribe(db.ctx)
+  db.Events, err = db.Store.EventBus().Subscribe(new(stores.EventReady))
   return nil
 }
 
@@ -110,7 +110,7 @@ func(db *Database) connectToPeers() error {
       defer wg.Done()
       err := db.IPFSCoreAPI.Swarm().Connect(db.ctx, *peerInfo)
       if err != nil {
-        db.Logger.Debug("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
+        db.Logger.Error("failed to connect", zap.String("peerID", peerInfo.ID.String()), zap.Error(err))
       } else {
         db.Logger.Debug("connected!", zap.String("peerID", peerInfo.ID.String()))
       }
@@ -156,9 +156,11 @@ func NewDatabase(
 func (db *Database) Connect(onReady func(address string)) (error) {
   var err error
 
+
   // if db.Init {
     err = db.init()
     if err != nil {
+      db.Logger.Error("%s", zap.Error(err))
       return err
     }
   // } else {
@@ -171,7 +173,7 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   // go func() {
     err = db.connectToPeers()
     if err != nil {
-      db.Logger.Debug("failed to connect: %s", zap.Error(err))
+      db.Logger.Error("failed to connect: %s", zap.Error(err))
     } else {
       db.Logger.Debug("connected to peer!")
     }
@@ -185,12 +187,13 @@ func (db *Database) Connect(onReady func(address string)) (error) {
 
   go func() {
     for {
-      for ev := range db.StoreEventChan {
+      for ev := range db.Events.Out() {
         db.Logger.Debug("got event", zap.Any("event", ev))
         switch ev.(type) {
-        case *stores.EventReady:
+        case stores.EventReady:
           db.URI = db.Store.Address().String()
           onReady(db.URI)
+          continue
         }
       }
     }
@@ -198,14 +201,18 @@ func (db *Database) Connect(onReady func(address string)) (error) {
 
   err = db.Store.Load(db.ctx, -1)
   if err != nil {
+    db.Logger.Error("%s", zap.Error(err))
     // TODO: clean up
     return err
   }
 
+  db.Logger.Debug("connect done")
   return nil
 }
 
 func (db *Database) Disconnect() {
+  db.Events.Close()
+  db.Store.Close()
   db.OrbitDB.Close()
 }
 

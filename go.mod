@@ -3,11 +3,11 @@ module github.com/mrusme/superhighway84
 go 1.17
 
 require (
-	berty.tech/go-orbit-db v1.14.1
-	github.com/BurntSushi/toml v0.4.1
+	berty.tech/go-orbit-db v1.16.1
+	github.com/BurntSushi/toml v1.0.0
 	github.com/eliukblau/pixterm v1.3.1
 	github.com/gdamore/tcell/v2 v2.4.1-0.20210905002822-f057f0a857a1
-	github.com/go-playground/validator/v10 v10.9.0
+	github.com/go-playground/validator/v10 v10.10.1
 	github.com/google/uuid v1.3.0
 	github.com/ipfs/go-ipfs v0.11.0
 	github.com/ipfs/go-ipfs-config v0.18.0
@@ -16,14 +16,14 @@ require (
 	github.com/libp2p/go-libp2p-core v0.13.0
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/mrusme/go-poolsuite v0.0.0-20220102191132-9dd8514d3e05
-	github.com/rivo/tview v0.0.0-20211202162923-2a6de950f73b
+	github.com/rivo/tview v0.0.0-20220307222120-9994674d60a8
 	github.com/tidwall/buntdb v1.2.9
 	go.uber.org/zap v1.21.0
 )
 
 require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc // indirect
-	berty.tech/go-ipfs-log v1.6.0 // indirect
+	berty.tech/go-ipfs-log v1.7.0 // indirect
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
 	github.com/Stebalien/go-bitfield v0.0.1 // indirect
 	github.com/alecthomas/units v0.0.0-20210927113745-59d0afb8317a // indirect
@@ -54,7 +54,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-collections/go-datastructures v0.0.0-20150211160725-59788d5eb259 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
@@ -227,12 +226,12 @@ require (
 	go.uber.org/fx v1.15.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go4.org v0.0.0-20200411211856-f5505b9728dd // indirect
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 	golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6 // indirect
 	golang.org/x/image v0.0.0-20191206065243-da761ea9ff43 // indirect
 	golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028 // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211025112917-711f33c9992c // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
