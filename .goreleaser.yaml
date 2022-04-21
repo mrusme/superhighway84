@@ -10,7 +10,7 @@ builds:
       - openbsd
       - freebsd
       # - plan9
-      - android
+      # - android
       - windows
     goarch:
       - 386
@@ -31,4 +31,5 @@ builds:
         goarm: arm64
       - goos: plan0
         goarm: arm64
+
 
