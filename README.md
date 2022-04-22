@@ -254,6 +254,16 @@ KNOWN LIMITATIONS
   now, so Superhighway84 is basically stuck with it.
   If you happen to know your way around IPFS and maybe even go-orbit-db, and
   would like to support this project, please get in touch!
+- If you have a newer IPFS version installed than the one used by
+  Superhighway84, please make sure to **not upgrade** the IPFS_REPO that
+  Superhighway84 is using. Otherwise you will get an error when starting
+  Superhighway84 that will tell you that there is an IPFS repository mismatch:
+
+  > panic: Your programs version (11) is lower than your repos (12).
+
+  If this should be the case, please follow the instructions provided here:
+
+  https://github.com/mrusme/superhighway84/issues/42#issuecomment-1100582472
 
 
 
