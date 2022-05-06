@@ -4,6 +4,7 @@ import (
   "context"
   "sort"
   "sync"
+  "time"
 
   orbitdb "berty.tech/go-orbit-db"
   "berty.tech/go-orbit-db/accesscontroller"
@@ -43,7 +44,12 @@ type Database struct {
 func (db *Database) init() (error) {
   var err error
 
-  db.OrbitDB, err = orbitdb.NewOrbitDB(db.ctx, db.IPFSCoreAPI, &orbitdb.NewOrbitDBOptions{
+  // ctx, cancel := context.WithCancel(context.Background())
+  ctx, cancel := context.WithTimeout(context.Background(), 600 * time.Second)
+  defer cancel()
+
+  db.Logger.Debug("initializing NewOrbitDB ...")
+  db.OrbitDB, err = orbitdb.NewOrbitDB(ctx, db.IPFSCoreAPI, &orbitdb.NewOrbitDBOptions{
     Directory: &db.CachePath,
     Logger: db.Logger,
   })
@@ -70,15 +76,18 @@ func (db *Database) init() (error) {
   // db.URI = addr.String()
 
   storetype := "docstore"
-  db.Store, err = db.OrbitDB.Docs(db.ctx, db.ConnectionString, &orbitdb.CreateDBOptions{
+  db.Logger.Debug("initializing OrbitDB.Docs ...")
+  db.Store, err = db.OrbitDB.Docs(ctx, db.ConnectionString, &orbitdb.CreateDBOptions{
     AccessController: ac,
     StoreType: &storetype,
     StoreSpecificOpts: documentstore.DefaultStoreOptsForMap("id"),
+    Timeout: time.Second * 600,
   })
   if err != nil {
     return err
   }
 
+  db.Logger.Debug("subscribing to EventBus ...")
   db.Events, err = db.Store.EventBus().Subscribe(new(stores.EventReady))
   return nil
 }
@@ -136,15 +145,18 @@ func NewDatabase(
   db.Cache = cch
   db.Logger = logger
 
+  db.Logger.Debug("getting config root path ...")
   defaultPath, err := config.PathRoot()
   if err != nil {
     return nil, err
   }
 
+  db.Logger.Debug("setting up plugins ...")
   if err := setupPlugins(defaultPath); err != nil {
     return nil, err
   }
 
+  db.Logger.Debug("creating IPFS node ...")
   db.IPFSNode, db.IPFSCoreAPI, err = createNode(ctx, defaultPath)
   if err != nil {
     return nil, err
@@ -156,7 +168,18 @@ func NewDatabase(
 func (db *Database) Connect(onReady func(address string)) (error) {
   var err error
 
+  db.Logger.Info("connecting to peers ...")
+  // go func() {
+    err = db.connectToPeers()
+    if err != nil {
+      db.Logger.Error("failed to connect: %s", zap.Error(err))
+    } else {
+      db.Logger.Debug("connected to peer!")
+    }
+  // }()
 
+
+  db.Logger.Info("initializing database connection ...")
   // if db.Init {
     err = db.init()
     if err != nil {
@@ -169,19 +192,6 @@ func (db *Database) Connect(onReady func(address string)) (error) {
   //     return err
   //   }
   // }
-
-  // go func() {
-    err = db.connectToPeers()
-    if err != nil {
-      db.Logger.Error("failed to connect: %s", zap.Error(err))
-    } else {
-      db.Logger.Debug("connected to peer!")
-    }
-  // }()
-
-  // log.Println(db.Store.ReplicationStatus().GetBuffered())
-  // log.Println(db.Store.ReplicationStatus().GetQueued())
-  // log.Println(db.Store.ReplicationStatus().GetProgress())
 
   db.Logger.Info("running ...")
 

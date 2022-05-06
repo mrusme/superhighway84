@@ -237,6 +237,7 @@ KNOWN LIMITATIONS
   can alter its data. Since its using a standard _docstore_, PUT and DELETE
   events can alter existing data. This issue will be solved in the future by
   customizing the store to ignore these types of events.
+
 - Superhighway84 is always behind recent IPFS and also OrbitDB versions, mainly
   because Berty, the go-orbit-db maintainers, aren't exactly super helpful 
   and welcoming in regard of the usage of their library. Not only do they
@@ -254,6 +255,7 @@ KNOWN LIMITATIONS
   now, so Superhighway84 is basically stuck with it.
   If you happen to know your way around IPFS and maybe even go-orbit-db, and
   would like to support this project, please get in touch!
+
 - If you have a newer IPFS version installed than the one used by
   Superhighway84, please make sure to **not upgrade** the IPFS_REPO that
   Superhighway84 is using. Otherwise you will get an error when starting
@@ -264,6 +266,19 @@ KNOWN LIMITATIONS
   If this should be the case, please follow the instructions provided here:
 
   https://github.com/mrusme/superhighway84/issues/42#issuecomment-1100582472
+
+- If you encounter the following issue your IPFS repo version might be older
+  than what Superhighway84 is using:
+
+  > panic: ipfs repo needs migration
+
+  In this case you might want to follow the IPFS migration guide here:
+
+  https://github.com/ipfs/fs-repo-migrations/blob/master/run.md
+
+  Alternatively use the same IPFS version as used by Superhighway84 to
+  initialize a dedicated Superhighway84 repository. Please refer to the
+  INSTALLATION part for how to do so.
 
 
 

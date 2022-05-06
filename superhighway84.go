@@ -82,6 +82,7 @@ func main() {
   TUI.ArticlesDatasource = &articles
   TUI.ArticlesRoots = &articlesRoots
 
+  log.Println("initializing database ...")
   db, err := database.NewDatabase(ctx, cfg.ConnectionString, cfg.DatabaseCachePath, cch, logger)
   if err != nil {
     log.Panicln(err)
@@ -90,15 +91,20 @@ func main() {
 
   TUI.CallbackRefreshArticles = func() (error) {
     articles, articlesRoots, err = db.ListArticles()
-    logger.Error("%s", zap.Error(err))
+    if err != nil {
+      logger.Error("%s", zap.Error(err))
+    }
     return err
   }
   TUI.CallbackSubmitArticle = func(article *models.Article) (error) {
     err := db.SubmitArticle(article)
-    logger.Error("%s", zap.Error(err))
+    if err != nil {
+      logger.Error("%s", zap.Error(err))
+    }
     return err
   }
 
+  log.Println("connecting database ...")
   err = db.Connect(func(address string) {
     TUI.Meta["myID"] = db.GetOwnID()
     TUI.Meta["myPubKey"] = db.GetOwnPubKey()
