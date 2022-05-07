@@ -44,11 +44,26 @@
 ![Screenshot](screenshot01.png)
 
 ```
+More info: https://xn--gckvb8fzb.com/superhighway84/
+
+
 
 INSTALLATION
 ------------
 
-Clone this repository and run:
+Clone this repository
+
+- from GitHub 
+  (https://github.com/mrusme/superhighway84)
+  
+  $ git@github.com:mrusme/superhighway84.git
+
+- from Radicle 
+  (https://app.radicle.network/seeds/maple.radicle.garden/rad:git:hnrkcf9617a8pxxtw8caaop9ioe8cj5u4c4co)
+  
+  $ rad clone rad://maple.radicle.garden/hnrkcf9617a8pxxtw8caaop9ioe8cj5u4c4co
+
+Then cd into the cloned directory and run:
 
 $ go build .
 
@@ -59,6 +74,12 @@ If you don't have IPFS installed already, make sure to do so in order to be able
 to initialize your IPFS repository:
 
 https://docs.ipfs.io/install/command-line/
+
+Please make sure to use the same IPFS major version as used by Superhighway84. 
+You can find out what IPFS version Superhighway84 is using by running the
+following command from within the cloned directory:
+
+$ grep 'go-ipfs ' go.mod
 
 The IPFS repository can be initialized using the following command:
 
