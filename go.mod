@@ -1,6 +1,6 @@
 module github.com/mrusme/superhighway84
 
-go 1.17
+go 1.18
 
 require (
 	berty.tech/go-orbit-db v1.17.1
