@@ -115,7 +115,6 @@ func (cfg *Config) LoadDefaults() (error) {
     {tcell.Key('g'), "additional-key-home", ""},
     {tcell.Key('G'), "additional-key-end", ""},
 
-    {tcell.KeyF8, "play", "F8"},
     {tcell.Key('?'), "help", ""},
   }
 

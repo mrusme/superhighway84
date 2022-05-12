@@ -9,7 +9,6 @@ import (
 
   "github.com/gdamore/tcell/v2"
   "github.com/mrusme/superhighway84/cache"
-  "github.com/mrusme/superhighway84/common"
   "github.com/mrusme/superhighway84/config"
   "github.com/mrusme/superhighway84/models"
   "github.com/rivo/tview"
@@ -41,9 +40,6 @@ type TUI struct {
   VersionLatest              string
 
   Meta                       map[string]interface{}
-
-  // The fun starts here
-  Player                     *common.Player
 }
 
 type View interface {
@@ -99,8 +95,6 @@ func Init(embedfs *embed.FS, cfg *config.Config, cch *cache.Cache, logger *zap.L
 
   t.initInput()
 
-  // The fun stuff
-  t.Player = common.NewPlayer()
   return t
 }
 
@@ -132,9 +126,6 @@ func (t *TUI) initInput() {
       return nil
     case "quit":
       t.App.Stop()
-      return nil
-    case "play":
-      t.Player.Play()
       return nil
     default:
       if t.ModalVisible == true {
