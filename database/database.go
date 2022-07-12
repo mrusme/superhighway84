@@ -44,9 +44,7 @@ type Database struct {
 func (db *Database) init() (error) {
   var err error
 
-  // ctx, cancel := context.WithCancel(context.Background())
-  ctx, cancel := context.WithTimeout(context.Background(), 600 * time.Second)
-  defer cancel()
+  ctx := context.Background()
 
   db.Logger.Debug("initializing NewOrbitDB ...")
   db.OrbitDB, err = orbitdb.NewOrbitDB(ctx, db.IPFSCoreAPI, &orbitdb.NewOrbitDBOptions{

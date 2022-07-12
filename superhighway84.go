@@ -43,6 +43,7 @@ func NewLogger(filename string) (*zap.Logger, error) {
       filename,
     }
   }
+
   return cfg.Build()
 }
 
