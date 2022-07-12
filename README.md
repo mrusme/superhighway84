@@ -51,6 +51,48 @@ More info: https://xn--gckvb8fzb.com/superhighway84/
 INSTALLATION
 ------------
 
+
+PREREQUISITES:
+
+Download the latest IPFS 12.x release from
+https://github.com/ipfs/kubo/releases/tag/v0.12.2
+and unpack it:
+
+$ tar -xzf ./go-ipfs_*.tar.gz
+
+If you haven't used IPFS so far, initialize the IPFS repository using the 
+following command:
+
+$ ./go-ipfs/ipfs init
+
+If you had used IPFS an already have an IPFS repository in place, either
+(re)move it from ~/.ipfs or make sure to `export IPFS_PATH` before running the
+`ipfs init` command, e.g.:
+
+$ export IPFS_PATH=~/.ipfs-sh84
+$ ./go-ipfs/ipfs init
+
+
+
+FROM RELEASE
+
+Download the latest release from 
+https://github.com/mrusme/superhighway84/releases/latest
+
+$ tar -xzf ./superhighway84_*.tar.gz
+$ ./superhighway84
+
+If you initialized the IPFS repo under in a custom location, you need to prefix
+`IPFS_PATH`:
+
+$ IPFS_PATH=~/.ipfs-sh84 ./superhighway84
+
+The binary `superhighway84` can be moved wherever you please.
+
+
+
+FROM SOURCE
+
 Clone this repository
 
 - from GitHub 
@@ -69,21 +111,6 @@ $ go build .
 
 The binary will be available at ./superhighway84 and can be moved wherever you
 please.
-
-If you don't have IPFS installed already, make sure to do so in order to be able
-to initialize your IPFS repository:
-
-https://docs.ipfs.io/install/command-line/
-
-Please make sure to use the same IPFS major version as used by Superhighway84. 
-You can find out what IPFS version Superhighway84 is using by running the
-following command from within the cloned directory:
-
-$ grep 'go-ipfs ' go.mod
-
-The IPFS repository can be initialized using the following command:
-
-$ ipfs init
 
 
 
@@ -107,18 +134,10 @@ and 300 peers.
 
 Afterwards you can simply launch the binary:
 
-$ ./superhighway84
+$ superhighway84
 
 A setup wizard will help you with initial configuration. Please make sure to
 have at least HOME and EDITOR exported in your environment.
-
-In case you would like to use a dedicated ipfs repository for Superhighway84,
-you will have to export a different IPFS_PATH and make sure it was initialized
-beforehand:
-
-$ export IPFS_PATH=~/.ipfs-sh84
-$ ipfs init
-$ superhighway84
 
 In case you're intending to run the official IPFS daemon and Superhighway84 in
 parallel, be sure to adjust the ports in their respective IPFS repos (e.g.
@@ -272,17 +291,10 @@ KNOWN LIMITATIONS
   events can alter existing data. This issue will be solved in the future by
   customizing the store to ignore these types of events.
 
-- Superhighway84 is always behind recent IPFS and also OrbitDB versions, mainly
-  because Berty, the go-orbit-db maintainers, aren't exactly super helpful 
-  and welcoming in regard of the usage of their library. Not only do they
-  simply not document a thing or take interest in answering issue reports on
-  GitHub, they also don't seem to care about supporting recent IPFS versions 
-  either. 
-  Superhighway84 is bound to the version of IPFS that Berty decides to support 
+- Superhighway84 is bound to the version of IPFS that Berty decides to support 
   for go-orbit-db. go-orbit-db updates, on the other hand, seem to introduce
   breaking changes from time to time, which are hard to debug as someone without
-  in-depth knowledge nor documentation, and get basically no support from the
-  Berty developers whatsoever. Since Superhighway84 is pretty much a
+  in-depth knowledge nor documentation. Since Superhighway84 is pretty much a
   one-man-show it would be quite challenging to fork go-orbit-db in order to
   keep it up to date with IPFS and make its interface more stable. Unfortunately
   there doesn't seem to be an alternative to Berty's go-orbit-db as of right
