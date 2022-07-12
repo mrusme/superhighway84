@@ -147,6 +147,19 @@ patient.
 
 
 
+CONNECTIVITY
+------------
+
+If you're having trouble connecting to the IPFS network that might be due to
+your network setup. Please try the IPFS `AutoRelay` feature in such a case:
+
+$ ipfs config --json Swarm.RelayClient.Enabled true
+
+More information on this can be found here:
+https://github.com/ipfs/kubo/blob/master/docs/experimental-features.md#autorelay
+
+
+
 CONFIGURATION
 -------------
 
