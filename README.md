@@ -51,9 +51,9 @@ aesthetics.
 
 
 
-## INSTALLATION
+## Installation
 
-### PREREQUISITES:
+### Prerequisites
 
 Download the [IPFS 12.x
 release](https://github.com/ipfs/kubo/releases/tag/v0.12.2) and unpack it:
@@ -79,7 +79,7 @@ $ ./go-ipfs/ipfs init
 ```
 
 
-### FROM RELEASE
+### From Release
 
 Download the [latest
 release](https://github.com/mrusme/superhighway84/releases/latest) and unpack
@@ -101,7 +101,7 @@ The binary `superhighway84` can be moved wherever you please.
 
 
 
-### FROM SOURCE
+### From Source
 
 Clone this repository
 
@@ -125,7 +125,7 @@ please.
 
 
 
-## RUNNING
+## Running
 
 First, check ulimit -n and verify that it's at a reasonable amount. IPFS
 requires it to be large enough (>= 2048) in order to work properly over time.
@@ -182,7 +182,7 @@ patient.
 
 
 
-## CONNECTIVITY
+## Connectivity
 
 If you're having trouble connecting to the IPFS network that might be due to
 your network setup. Please try the IPFS `AutoRelay` feature in such a case:
@@ -196,7 +196,7 @@ https://github.com/ipfs/kubo/blob/master/docs/experimental-features.md#autorelay
 
 
 
-## CONFIGURATION
+## Configuration
 
 Superhighway84 will guide you through the basic configuration on its first run.
 The configuration is stored at the path that you specified in the setup wizard.
@@ -236,7 +236,7 @@ ArticlesListView =
 ```
 
 
-## USAGE
+## Usage
 
 The default keyboard shortcuts are:
 
@@ -261,7 +261,7 @@ However, you are free to customize these within your configuration file, under
 the section `Shortcuts`. 
 
 
-### SUBMIT ARTICLE
+### Submit Article
 
 When submitting a new article or a reply to an article, the $EDITOR is launched
 in which a document with a specific structure will be visible. This structure
@@ -295,7 +295,7 @@ The BODY can contain of multiline text.
 
 
 
-## KNOWN LIMITATIONS
+## Known Limitations
 
 - The OrbitDB that Superhighway84 uses is a public database, meaning everyone
   can alter its data. Since its using a standard _docstore_, PUT and DELETE
@@ -343,7 +343,7 @@ The BODY can contain of multiline text.
 
 
 
-## CREDITS
+## Credits
 
 - Superhighway84 name, code and graphics by [mrusme](https://github.com/mrusme)
 - Logo backdrop by
