@@ -43,79 +43,89 @@
 
 ![Screenshot](screenshot01.png)
 
-```
-More info: https://xn--gckvb8fzb.com/superhighway84/
+Superhighway84 is an open source, terminal-based, IPFS-powered, USENET-inspired,
+uncensorable, decentralized peer-to-peer internet discussion system with retro
+aesthetics.
+
+[More info here.](https://xn--gckvb8fzb.com/superhighway84/)
 
 
 
-INSTALLATION
-------------
+## INSTALLATION
 
+### PREREQUISITES:
 
-PREREQUISITES:
+Download the [IPFS 12.x
+release](https://github.com/ipfs/kubo/releases/tag/v0.12.2) and unpack it:
 
-Download the latest IPFS 12.x release from
-https://github.com/ipfs/kubo/releases/tag/v0.12.2
-and unpack it:
-
+```sh
 $ tar -xzf ./go-ipfs_*.tar.gz
+```
 
 If you haven't used IPFS so far, initialize the IPFS repository using the 
 following command:
 
+```sh
 $ ./go-ipfs/ipfs init
+```
 
 If you had used IPFS an already have an IPFS repository in place, either
-(re)move it from ~/.ipfs or make sure to `export IPFS_PATH` before running the
+(re)move it from `~/.ipfs` or make sure to `export IPFS_PATH` before running the
 `ipfs init` command, e.g.:
 
+```sh
 $ export IPFS_PATH=~/.ipfs-sh84
 $ ./go-ipfs/ipfs init
+```
 
 
+### FROM RELEASE
 
-FROM RELEASE
+Download the [latest
+release](https://github.com/mrusme/superhighway84/releases/latest) and unpack
+it:
 
-Download the latest release from 
-https://github.com/mrusme/superhighway84/releases/latest
-
+```sh
 $ tar -xzf ./superhighway84_*.tar.gz
 $ ./superhighway84
+```
 
 If you initialized the IPFS repo under in a custom location, you need to prefix
 `IPFS_PATH`:
 
+```sh
 $ IPFS_PATH=~/.ipfs-sh84 ./superhighway84
+```
 
 The binary `superhighway84` can be moved wherever you please.
 
 
 
-FROM SOURCE
+### FROM SOURCE
 
 Clone this repository
 
-- from GitHub 
-  (https://github.com/mrusme/superhighway84)
-  
+- from [GitHub](https://github.com/mrusme/superhighway84)
+  ```sh
   $ git@github.com:mrusme/superhighway84.git
-
-- from Radicle 
-  (https://app.radicle.network/seeds/maple.radicle.garden/rad:git:hnrkcf9617a8pxxtw8caaop9ioe8cj5u4c4co)
-  
+  ```
+- from [Radicle](https://app.radicle.network/seeds/maple.radicle.garden/rad:git:hnrkcf9617a8pxxtw8caaop9ioe8cj5u4c4co)
+  ```sh
   $ rad clone rad://maple.radicle.garden/hnrkcf9617a8pxxtw8caaop9ioe8cj5u4c4co
+  ```
 
 Then cd into the cloned directory and run:
 
+```sh
 $ go build .
+```
 
 The binary will be available at ./superhighway84 and can be moved wherever you
 please.
 
 
 
-RUNNING
--------
+## RUNNING
 
 First, check ulimit -n and verify that it's at a reasonable amount. IPFS
 requires it to be large enough (>= 2048) in order to work properly over time.
@@ -125,7 +135,9 @@ those flimsy MacBooks, older hardware, a Raspberry or a low-memory VPS it is
 advisable to set the previously created IPFS repository to the `lowpower`
 profile.
 
+```sh
 $ ipfs config profile apply lowpower
+```
 
 This should help with CPU usage, file descriptors and the amount of network
 connections. While during the startup period you might still see peers peaking
@@ -134,17 +146,20 @@ and 300 peers.
 
 Afterwards you can simply launch the binary:
 
+```sh
 $ superhighway84
+```
 
 A setup wizard will help you with initial configuration. Please make sure to
 have at least HOME and EDITOR exported in your environment.
 
 In case you're intending to run the official IPFS daemon and Superhighway84 in
 parallel, be sure to adjust the ports in their respective IPFS repos (e.g.
-~/.ipfs and ~/.ipfs-sh84) so that they won't utilize the same port numbers.
-The ports 4001, 5001 and 8080 are relevant and should be adjusted to something
-other for every new repo/IPFS node that will run in parallel, e.g.:
+`~/.ipfs` and `~/.ipfs-sh84`) so that they won't utilize the same port numbers.
+The ports `4001`, `5001` and `8080` are relevant and should be adjusted to
+something other for every new repo/IPFS node that will run in parallel, e.g.:
 
+```json
   "Addresses": {
     "Swarm": [
       "/ip4/0.0.0.0/tcp/4002",
@@ -157,8 +172,9 @@ other for every new repo/IPFS node that will run in parallel, e.g.:
     "API": "/ip4/127.0.0.1/tcp/5002",
     "Gateway": "/ip4/127.0.0.1/tcp/8081"
   },
+```
 
-NOTE: When running Superhighway84 for the first time it might seem like it's
+**NOTE**: When running Superhighway84 for the first time it might seem like it's
 "hanging" at the command prompt. Usually it isn't hanging but rather searching
 for peer it can connect to in order to synchronize the database. Depending on
 how many people are online, this process might take _some time_, please be
@@ -166,21 +182,21 @@ patient.
 
 
 
-CONNECTIVITY
-------------
+## CONNECTIVITY
 
 If you're having trouble connecting to the IPFS network that might be due to
 your network setup. Please try the IPFS `AutoRelay` feature in such a case:
 
+```sh
 $ ipfs config --json Swarm.RelayClient.Enabled true
+```
 
 More information on this can be found here:
 https://github.com/ipfs/kubo/blob/master/docs/experimental-features.md#autorelay
 
 
 
-CONFIGURATION
--------------
+## CONFIGURATION
 
 Superhighway84 will guide you through the basic configuration on its first run.
 The configuration is stored at the path that you specified in the setup wizard.
@@ -189,8 +205,7 @@ effect on the next launch of Superhighway84.
 
 Configuration options that might be of interest:
 
-- superhighway84.toml - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+```
 ArticlesListView =
   The view to be used for the articles lit. Possible values:
   0 - threaded view, latest thread at the top
@@ -218,16 +233,14 @@ ArticlesListView =
 
   For simple ASCII characters use their ASCII code, e.g. `114` for the character 
   `r`.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+```
 
 
-USAGE
------
+## USAGE
 
 The default keyboard shortcuts are:
 
+```
      C-r: Refresh
      C-h: Focus groups list
 C-l, C-k: Focus articles list
@@ -242,35 +255,34 @@ C-l, C-k: Focus articles list
       CR: Select item in list
        n: Publish new article
        r: Reply to selected article
+```
 
 However, you are free to customize these within your configuration file, under
 the section `Shortcuts`. 
 
 
-SUBMIT ARTICLE
+### SUBMIT ARTICLE
 
 When submitting a new article or a reply to an article, the $EDITOR is launched
 in which a document with a specific structure will be visible. This structure
 consists of the HEADER, a SEPARATOR and the BODY and looks like this:
 
-- $EDITOR - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+```
 Subject: This is the subject of the article
 Newsgroup: test.sandbox
 = = = = = =
 This is the multiline
 body of the article
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+```
 
 The HEADER contains all headers that are required for an article to be
 submitted. These are:
 
-- Subject: 
+- `Subject:`\
   The subject of the article that will be shown in the articles list. The
   subject must only contain of printable ASCII characters.
 
-- Newsgroup: 
+- `Newsgroup:`\
   The newsgroup under which the article will be submitted, this can
   either be an existing group or a new group. Please try to follow
   the convention when creating new groups.
@@ -283,8 +295,7 @@ The BODY can contain of multiline text.
 
 
 
-KNOWN LIMITATIONS
------------------
+## KNOWN LIMITATIONS
 
 - The OrbitDB that Superhighway84 uses is a public database, meaning everyone
   can alter its data. Since its using a standard _docstore_, PUT and DELETE
@@ -307,7 +318,9 @@ KNOWN LIMITATIONS
   Superhighway84 is using. Otherwise you will get an error when starting
   Superhighway84 that will tell you that there is an IPFS repository mismatch:
 
+  ```
   > panic: Your programs version (11) is lower than your repos (12).
+  ```
 
   If this should be the case, please follow the instructions provided here:
 
@@ -316,7 +329,9 @@ KNOWN LIMITATIONS
 - If you encounter the following issue your IPFS repo version might be older
   than what Superhighway84 is using:
 
+  ```
   > panic: ipfs repo needs migration
+  ```
 
   In this case you might want to follow the IPFS migration guide here:
 
@@ -328,14 +343,10 @@ KNOWN LIMITATIONS
 
 
 
-CREDITS
--------
+## CREDITS
 
-- Superhighway84 name, code and graphics by mrusme
-  https://github.com/mrusme
+- Superhighway84 name, code and graphics by [mrusme](https://github.com/mrusme)
+- Logo backdrop by
+  [Swift](https://twitter.com/Swift_1_2/status/1114865117533888512)
 
-- Logo backdrop by Swift
-  https://twitter.com/Swift_1_2/status/1114865117533888512
-
-```
 

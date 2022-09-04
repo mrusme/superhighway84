@@ -29,7 +29,7 @@ builds:
         goarch: arm64
       - goos: freebsd
         goarm: arm64
-      - goos: plan0
+      - goos: plan9
         goarm: arm64
 
 
