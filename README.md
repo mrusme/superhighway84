@@ -58,18 +58,18 @@ aesthetics.
 
 ### Prerequisites
 
-Download the [IPFS 12.x
-release](https://github.com/ipfs/kubo/releases/tag/v0.12.2) and unpack it:
+Download the [kubo 0.16
+release](https://github.com/ipfs/kubo/releases/tag/v0.16.0) and unpack it:
 
 ```sh
-$ tar -xzf ./go-ipfs_*.tar.gz
+$ tar -xzf ./kubo_*.tar.gz
 ```
 
 If you haven't used IPFS so far, initialize the IPFS repository using the 
 following command:
 
 ```sh
-$ ./go-ipfs/ipfs init
+$ ./kubo/ipfs init
 ```
 
 If you had used IPFS an already have an IPFS repository in place, either
