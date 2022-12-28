@@ -3,7 +3,7 @@ module github.com/mrusme/superhighway84
 go 1.18
 
 require (
-	berty.tech/go-orbit-db v1.18.0
+	berty.tech/go-orbit-db v1.19.1
 	github.com/BurntSushi/toml v1.2.0
 	github.com/eliukblau/pixterm v1.3.1
 	github.com/gdamore/tcell/v2 v2.5.2
