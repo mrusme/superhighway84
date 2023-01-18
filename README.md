@@ -52,8 +52,6 @@ aesthetics.
 
 [More info here.](https://xn--gckvb8fzb.com/superhighway84/)
 
-
-
 ## Installation
 
 ### Prerequisites
@@ -65,7 +63,7 @@ release](https://github.com/ipfs/kubo/releases/tag/v0.16.0) and unpack it:
 $ tar -xzf ./kubo_*.tar.gz
 ```
 
-If you haven't used IPFS so far, initialize the IPFS repository using the 
+If you haven't used IPFS so far, initialize the IPFS repository using the
 following command:
 
 ```sh
@@ -80,7 +78,6 @@ If you had used IPFS an already have an IPFS repository in place, either
 $ export IPFS_PATH=~/.ipfs-sh84
 $ ./go-ipfs/ipfs init
 ```
-
 
 ### From Release
 
@@ -101,8 +98,6 @@ $ IPFS_PATH=~/.ipfs-sh84 ./superhighway84
 ```
 
 The binary `superhighway84` can be moved wherever you please.
-
-
 
 ### From Source
 
@@ -125,8 +120,6 @@ $ go build .
 
 The binary will be available at ./superhighway84 and can be moved wherever you
 please.
-
-
 
 ## Running
 
@@ -164,17 +157,17 @@ something other for every new repo/IPFS node that will run in parallel, e.g.:
 
 ```json
   "Addresses": {
-    "Swarm": [
-      "/ip4/0.0.0.0/tcp/4002",
-      "/ip6/::/tcp/4002",
-      "/ip4/0.0.0.0/udp/4002/quic",
-      "/ip6/::/udp/4002/quic"
-    ],
-    "Announce": [],
-    "NoAnnounce": [],
-    "API": "/ip4/127.0.0.1/tcp/5002",
-    "Gateway": "/ip4/127.0.0.1/tcp/8081"
-  },
+"Swarm": [
+"/ip4/0.0.0.0/tcp/4002",
+"/ip6/::/tcp/4002",
+"/ip4/0.0.0.0/udp/4002/quic",
+"/ip6/::/udp/4002/quic"
+],
+"Announce": [],
+"NoAnnounce": [],
+"API": "/ip4/127.0.0.1/tcp/5002",
+"Gateway": "/ip4/127.0.0.1/tcp/8081"
+},
 ```
 
 **NOTE**: When running Superhighway84 for the first time it might seem like it's
@@ -182,8 +175,6 @@ something other for every new repo/IPFS node that will run in parallel, e.g.:
 for peer it can connect to in order to synchronize the database. Depending on
 how many people are online, this process might take _some time_, please be
 patient.
-
-
 
 ## Connectivity
 
@@ -196,8 +187,6 @@ $ ipfs config --json Swarm.RelayClient.Enabled true
 
 More information on this can be found here:
 https://github.com/ipfs/kubo/blob/master/docs/experimental-features.md#autorelay
-
-
 
 ## Configuration
 
@@ -238,7 +227,6 @@ ArticlesListView =
   `r`.
 ```
 
-
 ## Usage
 
 The default keyboard shortcuts are:
@@ -261,8 +249,7 @@ C-l, C-k: Focus articles list
 ```
 
 However, you are free to customize these within your configuration file, under
-the section `Shortcuts`. 
-
+the section `Shortcuts`.
 
 ### Submit Article
 
@@ -291,12 +278,10 @@ submitted. These are:
   the convention when creating new groups.
   The newsgroup must only contain of printable ASCII characters.
 
-The SEPARATOR contains of 6 equal signs and 5 spaces, alternating each 
+The SEPARATOR contains of 6 equal signs and 5 spaces, alternating each
 other, followed by a new line.
 
 The BODY can contain of multiline text.
-
-
 
 ## Known Limitations
 
@@ -305,7 +290,7 @@ The BODY can contain of multiline text.
   events can alter existing data. This issue will be solved in the future by
   customizing the store to ignore these types of events.
 
-- Superhighway84 is bound to the version of IPFS that Berty decides to support 
+- Superhighway84 is bound to the version of IPFS that Berty decides to support
   for go-orbit-db. go-orbit-db updates, on the other hand, seem to introduce
   breaking changes from time to time, which are hard to debug as someone without
   in-depth knowledge nor documentation. Since Superhighway84 is pretty much a
@@ -343,8 +328,6 @@ The BODY can contain of multiline text.
   Alternatively use the same IPFS version as used by Superhighway84 to
   initialize a dedicated Superhighway84 repository. Please refer to the
   INSTALLATION part for how to do so.
-
-
 
 ## Credits
 
