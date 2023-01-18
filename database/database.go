@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"log"
 	"sort"
 	"sync"
 	"time"
@@ -218,9 +219,18 @@ func (db *Database) Connect(onReady func(address string)) error {
 }
 
 func (db *Database) Disconnect() {
-	db.Events.Close()
-	db.Store.Close()
-	db.OrbitDB.Close()
+	err := db.Events.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	err = db.Store.Close()
+	if err != nil {
+		log.Println(err)
+	}
+	err = db.OrbitDB.Close()
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (db *Database) SubmitArticle(article *models.Article) error {
@@ -266,7 +276,10 @@ func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error)
 				if entity["in-reply-to-id"] != nil {
 					article.InReplyToID = entity["in-reply-to-id"].(string)
 				}
-				db.Cache.LoadArticle(&article)
+				err := db.Cache.LoadArticle(&article)
+				if err != nil {
+					return false, err
+				}
 				articles = append(articles, &article)
 				articlesMap[article.ID] = articles[(len(articles) - 1)]
 			}

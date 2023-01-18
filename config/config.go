@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -59,7 +60,10 @@ func LoadConfig() (*Config, error) {
 		}
 		configDir = filepath.Join(configDir, ".config")
 	}
-	os.MkdirAll(configDir, 0755)
+	err := os.MkdirAll(configDir, 0755)
+	if err != nil {
+		return nil, err
+	}
 
 	configFile := filepath.Join(configDir, "superhighway84.toml")
 
@@ -67,7 +71,12 @@ func LoadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(f)
 
 	configFileContent, err := io.ReadAll(f)
 	if err != nil {
@@ -120,7 +129,7 @@ func (cfg *Config) LoadDefaults() error {
 
 	var sb strings.Builder
 	for _, shortcut := range shortcutDefaults {
-		keyText := string(shortcut.key)
+		keyText := strconv.Itoa(int(shortcut.key))
 		if shortcut.keyAltText != "" {
 			keyText = shortcut.keyAltText
 		}
@@ -170,7 +179,10 @@ func (cfg *Config) Setup() error {
 		defaultConnectionString = cfg.ConnectionString
 	}
 	fmt.Printf("Database connection string [%s]: ", defaultConnectionString)
-	fmt.Scanln(&cfg.ConnectionString)
+	_, err := fmt.Scanln(&cfg.ConnectionString)
+	if err != nil {
+		return err
+	}
 	if strings.TrimSpace(cfg.ConnectionString) == "" {
 		cfg.ConnectionString = defaultConnectionString
 	}
@@ -186,11 +198,17 @@ func (cfg *Config) Setup() error {
 		defaultDatabaseCachePath = cfg.CachePath
 	}
 	fmt.Printf("Database cache path [%s]: ", defaultDatabaseCachePath)
-	fmt.Scanln(&cfg.DatabaseCachePath)
+	_, err = fmt.Scanln(&cfg.DatabaseCachePath)
+	if err != nil {
+		return err
+	}
 	if strings.TrimSpace(cfg.DatabaseCachePath) == "" {
 		cfg.DatabaseCachePath = defaultDatabaseCachePath
 	}
-	os.MkdirAll(filepath.Dir(cfg.DatabaseCachePath), 0755)
+	err = os.MkdirAll(filepath.Dir(cfg.DatabaseCachePath), 0755)
+	if err != nil {
+		return err
+	}
 
 	defaultProgramCachePath := filepath.Join(cacheDir, "superhighway84", "program")
 	// Migration step from old CachePath to new DatabaseCachePath
@@ -200,18 +218,27 @@ func (cfg *Config) Setup() error {
 		defaultProgramCachePath = filepath.Join(cacheDir, "superhighway84.program")
 	}
 	fmt.Printf("Program cache path [%s]: ", defaultProgramCachePath)
-	fmt.Scanln(&cfg.ProgramCachePath)
+	_, err = fmt.Scanln(&cfg.ProgramCachePath)
+	if err != nil {
+		return err
+	}
 	if strings.TrimSpace(cfg.ProgramCachePath) == "" {
 		cfg.ProgramCachePath = defaultProgramCachePath
 	}
-	os.MkdirAll(filepath.Dir(cfg.ProgramCachePath), 0755)
+	err = os.MkdirAll(filepath.Dir(cfg.ProgramCachePath), 0755)
+	if err != nil {
+		return err
+	}
 
 	defaultLogfile := filepath.Join(cacheDir, "superhighway84.log")
 	if cfg.Logfile != "" {
 		defaultLogfile = cfg.Logfile
 	}
 	fmt.Printf("Logfile path [%s]: ", defaultLogfile)
-	fmt.Scanln(&cfg.Logfile)
+	_, err = fmt.Scanln(&cfg.Logfile)
+	if err != nil {
+		return err
+	}
 	if strings.TrimSpace(cfg.Logfile) == "" {
 		cfg.Logfile = defaultLogfile
 	}
@@ -223,7 +250,10 @@ func (cfg *Config) Setup() error {
 		defaultProfileFrom = cfg.Profile.From
 	}
 	fmt.Printf("From [%s]: ", defaultProfileFrom)
-	fmt.Scanln(&cfg.Profile.From)
+	_, err = fmt.Scanln(&cfg.Profile.From)
+	if err != nil {
+		return err
+	}
 	if strings.TrimSpace(cfg.Profile.From) == "" {
 		cfg.Profile.From = defaultProfileFrom
 	}
@@ -233,7 +263,10 @@ func (cfg *Config) Setup() error {
 		defaultProfileOrganization = cfg.Profile.Organization
 	}
 	fmt.Printf("Organization [%s]: ", defaultProfileOrganization)
-	fmt.Scanln(&cfg.Profile.Organization)
+	_, err = fmt.Scanln(&cfg.Profile.Organization)
+	if err != nil {
+		return err
+	}
 
 	return cfg.Persist()
 }

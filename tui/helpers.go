@@ -45,7 +45,10 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
 	}
 
 	if readOnly == true {
-		os.Chmod(tmpFile.Name(), 0400)
+		err := os.Chmod(tmpFile.Name(), 0400)
+		if err != nil {
+			return models.Article{}, err
+		}
 	}
 
 	wasSuspended := t.App.Suspend(func() {

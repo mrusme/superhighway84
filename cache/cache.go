@@ -2,6 +2,7 @@ package cache
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/mrusme/superhighway84/models"
 	"github.com/tidwall/buntdb"
@@ -26,7 +27,10 @@ func NewCache(dbPath string) (*Cache, error) {
 }
 
 func (cache *Cache) Close() {
-	cache.db.Close()
+	err := cache.db.Close()
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (cache *Cache) StoreArticle(article *models.Article) error {
@@ -49,7 +53,10 @@ func (cache *Cache) LoadArticle(article *models.Article) error {
 			return err
 		}
 
-		json.Unmarshal([]byte(value), article)
+		err = json.Unmarshal([]byte(value), article)
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 	return err

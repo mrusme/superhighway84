@@ -4,6 +4,7 @@ import (
 	"context"
 	"embed"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -27,9 +28,12 @@ var version = "v0.0.0"
 
 func NewLogger(filename string) (*zap.Logger, error) {
 	if runtime.GOOS == "windows" {
-		zap.RegisterSink("winfile", func(u *url.URL) (zap.Sink, error) {
+		err := zap.RegisterSink("winfile", func(u *url.URL) (zap.Sink, error) {
 			return os.OpenFile(u.Path[1:], os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	cfg := zap.NewDevelopmentConfig()
@@ -57,7 +61,10 @@ func main() {
 		log.Panicln(err)
 	}
 	if cfg.WasSetup() == false {
-		cfg.Setup()
+		err := cfg.Setup()
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	log.Println("initializing logger ...")
@@ -150,9 +157,17 @@ func getLatestVersion() string {
 	if err != nil {
 		return version
 	}
-	defer r.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(r.Body)
 	var result map[string]interface{}
-	json.NewDecoder(r.Body).Decode(&result)
+	err = json.NewDecoder(r.Body).Decode(&result)
+	if err != nil {
+		log.Println(err)
+	}
 
 	if val, exist := result["tag_name"]; exist == true {
 		return val.(string)

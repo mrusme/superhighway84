@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -406,7 +407,10 @@ func (mainscreen *Mainscreen) selectHandler(item string) func(int, string, strin
 			mainscreen.Refresh()
 		case "article":
 			mainscreen.markAsRead(index, mainscreen.ArticlesList[index])
-			mainscreen.T.OpenArticle(mainscreen.ArticlesList[index], true)
+			_, err := mainscreen.T.OpenArticle(mainscreen.ArticlesList[index], true)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
@@ -448,7 +452,10 @@ func (mainscreen *Mainscreen) markAsRead(index int, article *models.Article) {
 		1,
 	)
 	mainscreen.Articles.SetItemText(index, updatedMainText, secondaryText)
-	mainscreen.T.Cache.StoreArticle(article)
+	err := mainscreen.T.Cache.StoreArticle(article)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (mainscreen *Mainscreen) markAllAsRead() {
@@ -488,7 +495,10 @@ func (mainscreen *Mainscreen) submitNewArticle(group string) {
 				Rune: 'y',
 				Callback: func() {
 					if mainscreen.T.CallbackSubmitArticle != nil {
-						mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
+						err := mainscreen.T.CallbackSubmitArticle(&updatedNewArticle)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 					return
 				},
