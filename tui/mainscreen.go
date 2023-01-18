@@ -275,7 +275,7 @@ func (mainscreen *Mainscreen) addNodeToArticlesList(view int8, level int, articl
 			mainscreen.ArticlesList = append(mainscreen.ArticlesList, article)
 
 			if view == 0 && len(article.Replies) > 0 {
-				mainscreen.addNodeToArticlesList(view, (level + 1), &article.Replies, selectedGroup, previousGroupsList)
+				mainscreen.addNodeToArticlesList(view, level+1, &article.Replies, selectedGroup, previousGroupsList)
 			}
 		}
 

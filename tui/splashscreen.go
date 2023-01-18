@@ -48,7 +48,7 @@ func (splashscreen *Splashscreen) Refresh() {
 	// (h * 2) is a workaround for what looks like a bug in
 	// https://github.com/eliukblau/pixterm/blob/master/pkg/ansimage/ansimage.go
 	// Depending on the dithering setting the h/w changes significantly.
-	logoImage, err := ansimage.NewScaledFromReader(bytes.NewReader(splashscreen.ImageBytes), (h * 2), w, color.Black, ansimage.ScaleModeFill, ansimage.NoDithering)
+	logoImage, err := ansimage.NewScaledFromReader(bytes.NewReader(splashscreen.ImageBytes), h*2, w, color.Black, ansimage.ScaleModeFill, ansimage.NoDithering)
 	if err != nil {
 		return
 	}
