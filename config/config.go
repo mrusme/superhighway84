@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -69,7 +69,7 @@ func LoadConfig() (*Config, error) {
 	}
 	defer f.Close()
 
-	configFileContent, err := ioutil.ReadAll(f)
+	configFileContent, err := io.ReadAll(f)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func (cfg *Config) Persist() error {
 		return err
 	}
 
-	if err := ioutil.WriteFile(cfg.ConfigFile, buf.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(cfg.ConfigFile, buf.Bytes(), 0644); err != nil {
 		return err
 	}
 

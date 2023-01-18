@@ -3,7 +3,6 @@ package tui
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -22,12 +21,17 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
 		return *article, errors.New("EDITOR environment variable not available, please export")
 	}
 
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
+	tmpFile, err := os.CreateTemp(os.TempDir(), "article-*.txt")
 	if err != nil {
 		return *article, err
 	}
 
-	defer os.Remove(tmpFile.Name())
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			log.Println(err)
+		}
+	}(tmpFile.Name())
 
 	tmpContent := []byte(fmt.Sprintf(
 		"Subject: %s\nNewsgroup: %s\nFrom: %s\n= = = = = =\n%s",
