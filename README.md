@@ -286,7 +286,7 @@ The BODY can contain of multiline text.
 ## Known Limitations
 
 - The OrbitDB that Superhighway84 uses is a public database, meaning everyone
-  can alter its data. Since its using a standard _docstore_, PUT and DELETE
+  can alter its data. Since it's using a standard _docstore_, PUT and DELETE
   events can alter existing data. This issue will be solved in the future by
   customizing the store to ignore these types of events.
 
@@ -303,7 +303,7 @@ The BODY can contain of multiline text.
 
 - If you have a newer IPFS version installed than the one used by
   Superhighway84, please make sure to **not upgrade** the IPFS_REPO that
-  Superhighway84 is using. Otherwise you will get an error when starting
+  Superhighway84 is using. Otherwise, you will get an error when starting
   Superhighway84 that will tell you that there is an IPFS repository mismatch:
 
   ```

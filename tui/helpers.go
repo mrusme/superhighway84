@@ -66,7 +66,7 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
 
 	content := strings.SplitAfterN(string(tmpContent), "\n= = = = = =\n", 2)
 	if len(content) != 2 {
-		return *article, errors.New("Document malformatted")
+		return *article, errors.New("Document malformed")
 	}
 
 	newArticle := *article
