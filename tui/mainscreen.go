@@ -12,28 +12,28 @@ import (
 	"github.com/rivo/tview"
 )
 
-var HEADER_LOGO = `[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]
+var HeaderLogo = `[white]    _  _ _ __ [-][hotpink]____                  __   _      __                   ___  ____[-]
 [teal]   /  / / // [-][hotpink]/ __/_ _____  ___ ____/ /  (_)__ _/ / _    _____ ___ __( _ )/ / /[-]
 [teal]  _\ _\_\_\\_[-][fuchsia]\ \/ // / _ \/ -_) __/ _ \/ / _ \/ _ \ |/|/ / _ \/ // / _  /_  _/[-]
 [darkcyan] /  / / // [-][hotpink]/___/\_,_/ .__/\__/_/ /_//_/_/\_, /_//_/__,__/\_,_/\_, /\___/ /_/[-] [dimgray]%s[-]
 [hotpink]                   /_/                  /___/                /___/[-]           [yellow]%s[-]
 `
 
-var STATS_TEMPLATE = `[gray]⦿ %d PEERS[-]
+var StatsTemplate = `[gray]⦿ %d PEERS[-]
 [yellow]▲ %.2f[-] [gray]MB/s[-]
 [teal]▼ %.2f[-] [gray]MB/s[-]
 [yellow]▲ %.2f[-] [gray]MB[-]
 [teal]▼ %.2f[-] [gray]MB[-]
 `
 
-var INFO_TEMPLATE = "%s"
+var InfoTemplate = "%s"
 
 const (
-	COLOR_SUBJECT_UNREAD = "teal"
-	COLOR_SUBJECT_READ   = "white"
+	ColorSubjectUnread = "teal"
+	ColorSubjectRead   = "white"
 )
 
-var HELP_TEMPLATE = `
+var HelpTemplate = `
 HELP!
 
 Default shortcuts:
@@ -114,7 +114,7 @@ func (t *TUI) NewMainscreen() *Mainscreen {
 		SetBorderColor(tcell.ColorTeal)
 
 	mainscreen.Header = tview.NewTextView().
-		SetText(HEADER_LOGO).
+		SetText(HeaderLogo).
 		SetTextColor(tcell.ColorHotPink).
 		SetDynamicColors(true)
 	mainscreen.Header.SetBorder(false)
@@ -179,7 +179,7 @@ func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
 	rateOut := float64(stats["rate_out"]) / 1024.0 / 1024.0
 
 	mainscreen.Stats.SetText(
-		fmt.Sprintf(STATS_TEMPLATE,
+		fmt.Sprintf(StatsTemplate,
 			peers,
 			rateOut,
 			rateIn,
@@ -192,7 +192,7 @@ func (mainscreen *Mainscreen) SetStats(stats map[string]int64) {
 func (mainscreen *Mainscreen) SetInfo(info map[string]string) {
 	refresh := info["refresh"]
 	mainscreen.Info.SetText(
-		fmt.Sprintf(INFO_TEMPLATE,
+		fmt.Sprintf(InfoTemplate,
 			refresh,
 		),
 	)
@@ -211,7 +211,7 @@ func (mainscreen *Mainscreen) SetVersion(version string, versionLatest string) {
 	}
 
 	mainscreen.Header.SetText(
-		fmt.Sprintf(HEADER_LOGO,
+		fmt.Sprintf(HeaderLogo,
 			v,
 			l,
 		),
@@ -252,9 +252,9 @@ func (mainscreen *Mainscreen) addNodeToArticlesList(view int8, level int, articl
 				prefixSub = "[gray]│[-]"
 			}
 
-			subjectColor := COLOR_SUBJECT_UNREAD
+			subjectColor := ColorSubjectUnread
 			if article.Read == true {
-				subjectColor = COLOR_SUBJECT_READ
+				subjectColor = ColorSubjectRead
 			}
 
 			mainscreen.Articles.AddItem(
@@ -443,8 +443,8 @@ func (mainscreen *Mainscreen) markAsRead(index int, article *models.Article) {
 	mainText, secondaryText := mainscreen.Articles.GetItemText(index)
 	updatedMainText := strings.Replace(
 		mainText,
-		fmt.Sprintf("[%s]", COLOR_SUBJECT_UNREAD),
-		fmt.Sprintf("[%s]", COLOR_SUBJECT_READ),
+		fmt.Sprintf("[%s]", ColorSubjectUnread),
+		fmt.Sprintf("[%s]", ColorSubjectRead),
 		1,
 	)
 	mainscreen.Articles.SetItemText(index, updatedMainText, secondaryText)
@@ -558,7 +558,7 @@ func (mainscreen *Mainscreen) replyToArticle(article *models.Article) {
 }
 
 func (mainscreen *Mainscreen) showHelp() {
-	helpMessage := fmt.Sprintf(HELP_TEMPLATE, mainscreen.T.Config.ShortcutsReference)
+	helpMessage := fmt.Sprintf(HelpTemplate, mainscreen.T.Config.ShortcutsReference)
 	mainscreen.T.ShowHelpModal(helpMessage)
 
 	return

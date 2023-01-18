@@ -55,7 +55,7 @@ func LoadConfig() (*Config, error) {
 	if exist == false {
 		configDir, exist = os.LookupEnv("HOME")
 		if exist == false {
-			return nil, errors.New("No XDG_CONFIG_HOME or HOME set!")
+			return nil, errors.New("no XDG_CONFIG_HOME or HOME set")
 		}
 		configDir = filepath.Join(configDir, ".config")
 	}
@@ -78,7 +78,7 @@ func LoadConfig() (*Config, error) {
 	cfg.Shortcuts = make(map[string]string)
 	_, err = toml.Decode(string(configFileContent), &cfg)
 	if err != nil {
-		return nil, errors.New("The config could not be parsed, make sure it is valid TOML and you don't have double assignments.")
+		return nil, errors.New("the config could not be parsed, make sure it is valid TOML and you don't have double assignments")
 	}
 
 	cfg.ConfigFile = configFile

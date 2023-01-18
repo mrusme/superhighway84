@@ -19,7 +19,7 @@ func MillisecondsToDate(ms int64) string {
 
 func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Article, error) {
 	if editor, exist := os.LookupEnv("EDITOR"); exist == false || editor == "" {
-		return *article, errors.New("EDITOR environment variable not available, please export!")
+		return *article, errors.New("EDITOR environment variable not available, please export")
 	}
 
 	tmpFile, err := ioutil.TempFile(os.TempDir(), "article-*.txt")
@@ -66,7 +66,7 @@ func (t *TUI) OpenArticle(article *models.Article, readOnly bool) (models.Articl
 
 	content := strings.SplitAfterN(string(tmpContent), "\n= = = = = =\n", 2)
 	if len(content) != 2 {
-		return *article, errors.New("Document malformed")
+		return *article, errors.New("document malformed")
 	}
 
 	newArticle := *article
