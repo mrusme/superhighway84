@@ -87,7 +87,7 @@ func (db *Database) init() error {
 
 	db.Logger.Debug("subscribing to EventBus ...")
 	db.Events, err = db.Store.EventBus().Subscribe(new(stores.EventReady))
-	return nil
+	return err
 }
 
 func (db *Database) GetOwnID() string {
@@ -251,9 +251,7 @@ func (db *Database) GetArticleByID(id string) (models.Article, error) {
 
 func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error) {
 	var articles []*models.Article
-	var articlesMap map[string]*models.Article
-
-	articlesMap = make(map[string]*models.Article)
+	var articlesMap = make(map[string]*models.Article)
 
 	_, err := db.Store.Query(db.ctx, func(e interface{}) (bool, error) {
 		entity := e.(map[string]interface{})
@@ -286,7 +284,7 @@ func (db *Database) ListArticles() ([]*models.Article, []*models.Article, error)
 	for i := 0; i < len(articles); i++ {
 		if articles[i].InReplyToID != "" {
 			inReplyTo := articles[i].InReplyToID
-			if _, exist := articlesMap[inReplyTo]; exist == true {
+			if _, exist := articlesMap[inReplyTo]; exist {
 
 				(*articlesMap[inReplyTo]).Replies =
 					append((*articlesMap[inReplyTo]).Replies, articles[i])
