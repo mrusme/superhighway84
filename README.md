@@ -112,6 +112,11 @@ Clone this repository
   ```sh
   $ git clone git@github.com:mrusme/superhighway84.git
   ```
+- from 
+  [Radicle](https://app.radicle.xyz/nodes/seed.radicle.garden/rad:z4JkpNjyUemfCeU85iqssNEukoBn1/)
+  ```sh
+  $ rad clone rad:z4JkpNjyUemfCeU85iqssNEukoBn1
+  ```
 
 Then cd into the cloned directory and run:
 
